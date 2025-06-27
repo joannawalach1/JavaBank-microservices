@@ -21,6 +21,7 @@ public class User {
     private String firstName;
     private String surname;
     private String phoneNumber;
+    private String password;
     @Enumerated(EnumType.STRING)
     private UserStatus status = UserStatus.ACTIVE;
     private LocalDateTime createdAt;

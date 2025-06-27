@@ -37,3 +37,6 @@ eureka:
       path: /swagger-ui.html
       operationsSorter: method
       tagsSorter: alpha
+
+jwt:
+  secret: moja-super-tajna-wartosc
