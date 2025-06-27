@@ -44,9 +44,3 @@ data:
       path: /swagger-ui.html
       operationsSorter: method
       tagsSorter: alpha
-
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest

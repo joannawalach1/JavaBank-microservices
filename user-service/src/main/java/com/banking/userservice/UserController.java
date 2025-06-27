@@ -1,6 +1,7 @@
 package com.banking.userservice;
 
 import com.banking.userservice.dto.UserCreateDto;
+import com.banking.userservice.dto.UserLoginRequest;
 import com.banking.userservice.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,12 @@ public class UserController {
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserCreateDto userCreateDto) {
         UserResponseDto user = userService.createUser(userCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<JwtResponse> login(@RequestBody UserLoginRequest request) {
+        String token = userService.login(request);
+        return ResponseEntity.ok(new JwtResponse(token));
     }
 
     @PostMapping("/updatedUser")
