@@ -40,4 +40,8 @@ public class AccountService {
                 .map(accountMapper::toAccountResponseDto)
                 .collect(Collectors.toList());
     }
+
+    public List<AccountResponseDto> getAccountsByUserId(Long userId) {
+        return accountRepository.getAccountsByUserId(userId);
+    }
 }

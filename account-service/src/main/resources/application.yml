@@ -7,7 +7,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://username:password@localhost:27017/accounts
+      uri: mongodb://localhost:27017/accounts
 
   redis:
     host: localhost
