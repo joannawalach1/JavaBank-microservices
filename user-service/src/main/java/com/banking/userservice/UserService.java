@@ -1,8 +1,10 @@
 package com.banking.userservice;
 
 import com.banking.userservice.dto.UserCreateDto;
+import com.banking.userservice.dto.UserLoginRequest;
 import com.banking.userservice.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,7 +15,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
     public List<UserResponseDto> findAllUsers() {
         return userRepository.findAll().stream()
                 .map(UserMapper::mapToResponseDto)
@@ -44,6 +47,7 @@ public class UserService {
         user.setEmail(userCreateDto.getEmail());
         user.setFirstName(userCreateDto.getFirstName());
         user.setSurname(userCreateDto.getSurname());
+        user.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
         user.setPhoneNumber(userCreateDto.getPhoneNumber());
         user.setStatus(UserStatus.ACTIVE);
         user.setCreatedAt(LocalDateTime.now());
@@ -63,10 +67,21 @@ public class UserService {
         existingUser.setEmail(userCreateDto.getEmail());
         existingUser.setFirstName(userCreateDto.getFirstName());
         existingUser.setSurname(userCreateDto.getSurname());
+        existingUser.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
         existingUser.setPhoneNumber(userCreateDto.getPhoneNumber());
         existingUser.setUpdatedAt(LocalDateTime.now());
 
         User savedUser = userRepository.save(existingUser);
         return UserMapper.mapToResponseDto(savedUser);
+    }
+
+    public String login(UserLoginRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid username or password");
+        }
+
+        return jwtService.generateToken(user);
     }
 }
