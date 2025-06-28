@@ -47,7 +47,7 @@ public class UserService {
         user.setEmail(userCreateDto.getEmail());
         user.setFirstName(userCreateDto.getFirstName());
         user.setSurname(userCreateDto.getSurname());
-        user.setPassword(user.getPassword());
+        user.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
         user.setPhoneNumber(userCreateDto.getPhoneNumber());
         user.setStatus(UserStatus.ACTIVE);
         user.setCreatedAt(LocalDateTime.now());
@@ -67,7 +67,7 @@ public class UserService {
         existingUser.setEmail(userCreateDto.getEmail());
         existingUser.setFirstName(userCreateDto.getFirstName());
         existingUser.setSurname(userCreateDto.getSurname());
-        existingUser.setPassword(userCreateDto.getPassword());
+        existingUser.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
         existingUser.setPhoneNumber(userCreateDto.getPhoneNumber());
         existingUser.setUpdatedAt(LocalDateTime.now());
 
