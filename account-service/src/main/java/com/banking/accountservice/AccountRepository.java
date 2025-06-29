@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AccountRepository extends MongoRepository<Account, String> {
+public interface AccountRepository extends MongoRepository<Account, Long> {
     List<Account> findByUserId(Long userId);
 
     List<Account> findByAccountNumber(String accountNumber);
