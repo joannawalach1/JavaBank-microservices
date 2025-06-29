@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final AccountClient accountClient;
+    private final RestTemplate restTemplate;
 
     @GetMapping("/{username}")
     public ResponseEntity<UserResponseDto> findUserByUsername(@PathVariable String username) {
@@ -50,16 +51,15 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
     }
 
-    @GetMapping("/{username}/accounts")
-    public ResponseEntity<UserWithAccountsDto> getUserWithAccounts(@PathVariable String username) {
-        UserResponseDto user = userService.findUserByUsername(username);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{userId}/with-accounts")
+    public ResponseEntity<UserWithAccountsDto> getUserWithAccounts(@PathVariable Long userId) {
+        UserWithAccountsDto userWithAccounts = userService.getUserWithAccounts(userId);
+        return ResponseEntity.ok(userWithAccounts);
+    }
 
-        List<AccountResponseDto> accounts = accountClient.getAccountsForUser(user.getId());
-        UserWithAccountsDto response = new UserWithAccountsDto(user, accounts);
-
-        return ResponseEntity.ok(response);
+    @GetMapping("/{userId}/accounts")
+    public ResponseEntity<List<AccountResponseDto>> getUserAccounts(@PathVariable Long userId) {
+        List<AccountResponseDto> accounts = userService.getUserAccounts(userId);
+        return ResponseEntity.ok(accounts);
     }
 }

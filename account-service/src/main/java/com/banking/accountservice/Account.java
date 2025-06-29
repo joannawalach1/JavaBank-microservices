@@ -1,5 +1,7 @@
 package com.banking.accountservice;
 
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,9 +17,10 @@ import java.time.LocalDateTime;
 @Document(collection = "accounts")
 public class Account {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     private String accountNumber;
-    private String userId;
+    private Long userId;
     private String accountType;
     private BigDecimal balance;
     private String currency;

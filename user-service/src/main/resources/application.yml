@@ -40,3 +40,7 @@ eureka:
 
 jwt:
   secret: moja-super-tajna-wartosc
+
+account:
+  service:
+    url: http://account-service

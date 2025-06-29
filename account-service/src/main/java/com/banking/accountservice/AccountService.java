@@ -16,7 +16,7 @@ public class AccountService {
     private final AccountMapper accountMapper;
 
     @Cacheable(value = "account", key = "#userId")
-    public List<AccountResponseDto> getUserAccount(String userId) {
+    public List<AccountResponseDto> getUserAccount(Long userId) {
         return accountRepository.findByUserId(userId).stream()
                 .map(accountMapper::toAccountResponseDto)
                 .collect(Collectors.toList());
@@ -41,7 +41,15 @@ public class AccountService {
                 .collect(Collectors.toList());
     }
 
-    public List<AccountResponseDto> getAccountsByUserId(Long userId) {
-        return accountRepository.getAccountsByUserId(userId);
+    public List<AccountResponseDto> findByUserId(Long userId) {
+        return accountRepository.findByUserId(userId).stream()
+                .map(accountMapper::toAccountResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AccountResponseDto> findById(Long accountId) {
+        return accountRepository.findByUserId(accountId).stream()
+                .map(accountMapper::toAccountResponseDto)
+                .collect(Collectors.toList());
     }
 }

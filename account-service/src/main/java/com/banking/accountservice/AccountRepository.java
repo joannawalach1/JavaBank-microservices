@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface AccountRepository extends MongoRepository<Account, String> {
-    List<Account> findByUserId(String userId);
+    List<Account> findByUserId(Long userId);
 
     List<Account> findByAccountNumber(String accountNumber);
 

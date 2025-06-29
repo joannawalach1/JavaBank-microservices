@@ -1,8 +1,10 @@
 package com.banking.userservice;
 
+import com.banking.accountservice.dto.AccountResponseDto;
 import com.banking.userservice.dto.UserCreateDto;
 import com.banking.userservice.dto.UserLoginRequest;
 import com.banking.userservice.dto.UserResponseDto;
+import com.banking.userservice.dto.UserWithAccountsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final AccountServiceClient accountServiceClient;
+
     public List<UserResponseDto> findAllUsers() {
         return userRepository.findAll().stream()
                 .map(UserMapper::mapToResponseDto)
@@ -81,9 +85,27 @@ public class UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid username or password");
         }
-
         return jwtService.generateToken(user);
     }
 
+    public UserWithAccountsDto getUserWithAccounts(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        List<AccountResponseDto> accounts = accountServiceClient.getAccountsByUserId(userId);
+
+        return new UserWithAccountsDto(
+                user.getUsername(),
+                user.getEmail(),
+                accounts
+        );
+    }
+
+    public List<AccountResponseDto> getUserAccounts(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new RuntimeException("User not found");
+        }
+
+        return accountServiceClient.getAccountsByUserId(userId);
+    }
 }

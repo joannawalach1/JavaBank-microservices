@@ -15,7 +15,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<AccountResponseDto>> getUserAccountById(@PathVariable String userId) {
+    public ResponseEntity<List<AccountResponseDto>> getUserAccountById(@PathVariable Long userId) {
         List<AccountResponseDto> userAccount = accountService.getUserAccount(userId);
         return ResponseEntity.ok().body(userAccount);
     }
@@ -26,8 +26,8 @@ public class AccountController {
         return ResponseEntity.ok().body(accountByNumber);
     }
 
-    @PostMapping
-    public ResponseEntity<AccountResponseDto> createAccount(AccountCreateDto accountCreateDto) {
+    @PostMapping("/account")
+    public ResponseEntity<AccountResponseDto> createAccount(@RequestBody AccountCreateDto accountCreateDto) {
         AccountResponseDto newAccount = accountService.createAccount(accountCreateDto);
         return ResponseEntity.ok().body(newAccount);
     }
@@ -40,7 +40,14 @@ public class AccountController {
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<AccountResponseDto>> getAccountsByUserId(@PathVariable Long userId) {
-        return ResponseEntity.ok(accountService.getAccountsByUserId(userId));
+        List<AccountResponseDto> accounts = accountService.findByUserId(userId);
+        return ResponseEntity.ok(accounts);
+    }
+
+    @GetMapping("/{accountId}")
+    public ResponseEntity<List<AccountResponseDto>> getAccountById(@PathVariable Long accountId) {
+        List<AccountResponseDto> account = accountService.findById(accountId);
+        return ResponseEntity.ok(account);
     }
 
 }
