@@ -1,5 +1,6 @@
 package com.banking.transactionservice;
 
+import com.banking.transactionservice.dto.TransactionCreateRequest;
 import com.banking.transactionservice.dto.TransactionResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,25 +23,32 @@ public class TransactionService {
         return TransactionMapper.toTransactionResponseDto(byId);
     }
 
-    public Transaction createTransaction(String id, String userId, String account, String accountFrom,
-                                         BigDecimal amount, String currency, String transactionType, String transactionStatus, LocalDateTime createdAt) {
-        if (amount.compareTo(BigDecimal.ZERO) <= 0) {
+    public Transaction createTransaction(TransactionCreateRequest transactionCreateRequest) {
+        BigDecimal amount = transactionCreateRequest.getAmount();
+        Long accountFrom = transactionCreateRequest.getAccountFrom();
+        Long accountTo = transactionCreateRequest.getAccountId();
+        Long userId = transactionCreateRequest.getUserId();
+        String currency = transactionCreateRequest.getCurrency();
+        String transactionType = transactionCreateRequest.getTransactionType();
+
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be positive");
         }
-        if (accountFrom.equals(account)) {
-            throw new IllegalArgumentException("Source and destination accounts cannot be the same");
+        if (accountFrom == null || accountTo == null || accountFrom.equals(accountTo)) {
+            throw new IllegalArgumentException("Source and destination accounts cannot be the same or null");
         }
 
         Transaction transaction = new Transaction(
-                id != null ? id : UUID.randomUUID().toString(),
-                Long.parseLong(userId),
-                Long.parseLong(account),
-                Long.parseLong(accountFrom),
+                UUID.randomUUID().toString(),
+                userId,
+                accountTo,
+                accountFrom,
                 amount,
                 currency,
-                transactionType,
-                transactionStatus,
-                createdAt != null ? createdAt : LocalDateTime.now());
+                transactionCreateRequest.getCurrency(),
+                transactionCreateRequest.getTransactionType()
+        );
+
         return transactionRepository.save(transaction);
     }
 
