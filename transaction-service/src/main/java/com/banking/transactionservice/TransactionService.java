@@ -2,7 +2,7 @@ package com.banking.transactionservice;
 
 import com.banking.transactionservice.dto.TransactionCreateRequest;
 import com.banking.transactionservice.dto.TransactionResponseDto;
-import lombok.RequiredArgsConstructor;
+import com.datastax.oss.driver.shaded.guava.common.collect.Maps;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,10 +12,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class TransactionService {
 
-    private TransactionRepository transactionRepository;
+    private final TransactionRepository transactionRepository;
+
+    public TransactionService(TransactionRepository transactionRepository) {
+        this.transactionRepository = transactionRepository;
+    }
 
     public TransactionResponseDto getTransactionsById(String transactionId) {
         Transaction byId = transactionRepository.findById(transactionId)
@@ -30,6 +33,7 @@ public class TransactionService {
         Long userId = transactionCreateRequest.getUserId();
         String currency = transactionCreateRequest.getCurrency();
         String transactionType = transactionCreateRequest.getTransactionType();
+        LocalDateTime createdAt = LocalDateTime.now();
 
         if (amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new IllegalArgumentException("Amount must be positive");
@@ -37,19 +41,22 @@ public class TransactionService {
         if (accountFrom == null || accountTo == null || accountFrom.equals(accountTo)) {
             throw new IllegalArgumentException("Source and destination accounts cannot be the same or null");
         }
-
-        Transaction transaction = new Transaction(
-                UUID.randomUUID().toString(),
-                userId,
-                accountTo,
-                accountFrom,
-                amount,
-                currency,
-                transactionCreateRequest.getCurrency(),
-                transactionCreateRequest.getTransactionType()
+        String id = UUID.randomUUID().toString();
+        Transaction transactionEntity = TransactionMapper.toTransactionEntity(
+                new TransactionResponseDto(
+                        id,
+                        userId,
+                        accountTo,
+                        accountFrom,
+                        amount,
+                        currency,
+                        transactionType,
+                        "PENDING",
+                        createdAt
+                )
         );
 
-        return transactionRepository.save(transaction);
+        return transactionRepository.save(transactionEntity);
     }
 
     public List<TransactionResponseDto> getTransactionsByAccountId(String accountId) {

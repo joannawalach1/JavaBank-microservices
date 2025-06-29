@@ -2,7 +2,6 @@ package com.banking.accountservice;
 
 import com.banking.accountservice.dto.AccountCreateDto;
 import com.banking.accountservice.dto.AccountResponseDto;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +9,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/accounts")
-@RequiredArgsConstructor
 public class AccountController {
     private final AccountService accountService;
+
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<List<AccountResponseDto>> getUserAccountById(@PathVariable String userId) {
@@ -27,7 +29,7 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<AccountResponseDto> createAccount(AccountCreateDto accountCreateDto) {
+    public ResponseEntity<AccountResponseDto> createAccount(@RequestBody AccountCreateDto accountCreateDto) {
         AccountResponseDto newAccount = accountService.createAccount(accountCreateDto);
         return ResponseEntity.ok().body(newAccount);
     }

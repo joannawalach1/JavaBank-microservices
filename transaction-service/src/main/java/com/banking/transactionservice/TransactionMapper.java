@@ -20,7 +20,7 @@ public class TransactionMapper {
         );
     }
 
-    public Transaction toTransactionEntity(TransactionCreateRequest dto) {
+    public static Transaction toTransactionEntity(TransactionCreateRequest dto) {
         return new Transaction(
                 null,
                 dto.getUserId(),
@@ -32,6 +32,20 @@ public class TransactionMapper {
                 "PENDING",
                 java.time.LocalDateTime.now()
                 );
+    }
+
+    public static Transaction toTransactionEntity(TransactionResponseDto dto) {
+        return new Transaction(
+                dto.getId(),
+                dto.getUserId(),
+                dto.getAccountId(),
+                dto.getAccountFrom(),
+                dto.getAmount(),
+                dto.getCurrency(),
+                dto.getTransactionType(),
+                dto.getTransactionStatus(),
+                dto.getCreatedAt()
+        );
     }
 }
 
