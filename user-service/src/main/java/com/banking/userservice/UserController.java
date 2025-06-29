@@ -1,8 +1,10 @@
 package com.banking.userservice;
 
+import com.banking.accountservice.dto.AccountResponseDto;
 import com.banking.userservice.dto.UserCreateDto;
 import com.banking.userservice.dto.UserLoginRequest;
 import com.banking.userservice.dto.UserResponseDto;
+import com.banking.userservice.dto.UserWithAccountsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,8 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final AccountClient accountClient;
+
     @GetMapping("/{username}")
     public ResponseEntity<UserResponseDto> findUserByUsername(@PathVariable String username) {
         UserResponseDto userByUsername = userService.findUserByUsername(username);
@@ -28,7 +32,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(allUsers);
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<UserResponseDto> createUser(@RequestBody UserCreateDto userCreateDto) {
         UserResponseDto user = userService.createUser(userCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
@@ -44,6 +48,18 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateUser(@RequestBody UserCreateDto userCreateDto) {
         UserResponseDto userResponseDto = userService.updateUser(userCreateDto);
         return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
+    }
 
+    @GetMapping("/{username}/accounts")
+    public ResponseEntity<UserWithAccountsDto> getUserWithAccounts(@PathVariable String username) {
+        UserResponseDto user = userService.findUserByUsername(username);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<AccountResponseDto> accounts = accountClient.getAccountsForUser(user.getId());
+        UserWithAccountsDto response = new UserWithAccountsDto(user, accounts);
+
+        return ResponseEntity.ok(response);
     }
 }

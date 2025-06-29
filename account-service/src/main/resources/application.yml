@@ -5,26 +5,15 @@ spring:
   application:
     name: account-service
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-
-data:
-  mongodb:
-    host: localhost
-    port: 27017
-    database: myapp
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/accounts
 
   redis:
     host: localhost
     port: 6379
     database: 0
     timeout: 2000ms
-
-
     jedis:
       pool:
         max-active: 8
@@ -44,3 +33,10 @@ data:
       path: /swagger-ui.html
       operationsSorter: method
       tagsSorter: alpha
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true

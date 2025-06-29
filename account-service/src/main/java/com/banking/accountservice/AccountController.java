@@ -37,4 +37,10 @@ public class AccountController {
         List<AccountResponseDto> allAccounts = accountService.getAllAccounts();
         return ResponseEntity.ok().body(allAccounts);
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<AccountResponseDto>> getAccountsByUserId(@PathVariable Long userId) {
+        return ResponseEntity.ok(accountService.getAccountsByUserId(userId));
+    }
+
 }
