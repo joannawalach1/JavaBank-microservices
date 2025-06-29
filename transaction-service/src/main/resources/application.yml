@@ -14,6 +14,8 @@ spring:
       keyspace-name: transaction_keyspace
       local-datacenter: datacenter1
       schema-action: create-if-not-exists
+      username: cassandra
+      password: cassandra
 
 eureka:
   client:

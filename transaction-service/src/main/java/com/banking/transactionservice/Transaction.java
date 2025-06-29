@@ -2,6 +2,8 @@ package com.banking.transactionservice;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,9 +16,10 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(value = "transactions")
+@Table("transactions")
 public class Transaction {
     @PrimaryKey
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
     private Long userId;
     private Long accountId;
