@@ -4,6 +4,16 @@ server:
 spring:
   application:
     name: transaction-service
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  data:
+    cassandra:
+      contact-points: localhost
+      port: 9042
+      keyspace-name: transaction_keyspace
+      local-datacenter: datacenter1
+      schema-action: create-if-not-exists
 
 eureka:
   client:
@@ -11,3 +21,5 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
     register-with-eureka: true
     fetch-registry: true
+
+
