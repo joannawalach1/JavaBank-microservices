@@ -9,10 +9,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/transactions")
-@RequiredArgsConstructor
 public class TransactionController {
-    private TransactionService transactionService;
-    @PostMapping
+    private final TransactionService transactionService;
+
+    public TransactionController(TransactionService transactionService) {
+        this.transactionService = transactionService;
+    }
+    @PostMapping("/newTransaction")
     public Transaction createTransaction(@RequestBody TransactionCreateRequest transactionCreateRequest) {
         return transactionService.createTransaction(transactionCreateRequest);
     }
