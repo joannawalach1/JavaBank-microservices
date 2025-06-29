@@ -2,7 +2,6 @@ package com.banking.transactionservice;
 
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,4 +29,6 @@ public class Transaction {
     private String transactionStatus;
     private LocalDateTime createdAt;
 
+    public Transaction(String string, Long userId, Long accountTo, Long accountFrom, BigDecimal amount, String currency, String currency1, String transactionType) {
+    }
 }
