@@ -1,191 +1,237 @@
-JavaBank - Microservices Banking System
+# JavaBank - Microservices Banking System
+
 A modern banking system built with Spring Boot microservices architecture, featuring user management, account services, and transaction processing.
-🏗️ Architecture
+
+---
+
+## 🏗️ Architecture
+
 This project implements a microservices architecture with the following components:
 
-Eureka Server - Service discovery and registry
-User Service - User management and authentication
-Account Service - Account management and operations
-Transaction Service - Transaction processing (in development)
+- **Eureka Server** - Service discovery and registry  
+- **User Service** - User management and authentication  
+- **Account Service** - Account management and operations  
+- **Transaction Service** - Transaction processing (in development)  
 
-📋 Prerequisites
+---
+
+## 📋 Prerequisites
+
 Before running the application, ensure you have the following installed:
 
-Java 17 or higher
-Maven 3.6+
-Docker and Docker Compose
-PostgreSQL (for user service)
-MongoDB (for account service)
-Redis (for caching)
-RabbitMQ (for messaging)
+- Java 17 or higher  
+- Maven 3.6+  
+- Docker and Docker Compose  
+- PostgreSQL (for user service)  
+- MongoDB (for account service)  
+- Redis (for caching)  
+- RabbitMQ (for messaging)  
 
-🚀 Quick Start
-1. Start Infrastructure Services
-Navigate to the account-service directory and start the required infrastructure:
-bashcd account-service
+---
+
+## 🚀 Quick Start
+
+### Start Infrastructure Services
+
+Navigate to the `account-service` directory and start the required infrastructure:
+
+```bash
+cd account-service
 docker-compose up -d
-This will start:
+```
 
-MongoDB on port 27017
-Redis on port 6379
-RabbitMQ on ports 5672 (AMQP) and 15672 (Management UI)
+This will start:  
+- MongoDB on port 27017  
+- Redis on port 6379  
+- RabbitMQ on ports 5672 (AMQP) and 15672 (Management UI)  
 
-2. Set up PostgreSQL Database
-Create a PostgreSQL database named userDB with the following credentials:
+### Set up PostgreSQL Database
 
-Username: postgres
-Password: 666666
-Port: 5432
+Create a PostgreSQL database named `userDB` with the following credentials:
 
-3. Start Services
+- **Username:** `postgres`  
+- **Password:** `666666`  
+- **Port:** `5432`  
+
+### Start Services
+
 Start the services in the following order:
-Start Eureka Server
-bashcd eureka-server
+
+```bash
+# Start Eureka Server
+cd eureka-server
 mvn spring-boot:run
-Eureka Dashboard will be available at: http://localhost:8761
-Start User Service
-bashcd user-service
+```
+
+Eureka Dashboard will be available at: [http://localhost:8761](http://localhost:8761)
+
+```bash
+# Start User Service
+cd user-service
 mvn spring-boot:run
+```
+
 User Service will run on port 8082
-Start Account Service
-bashcd account-service
+
+```bash
+# Start Account Service
+cd account-service
 mvn spring-boot:run
+```
+
 Account Service will run on port 8081
-Start Transaction Service
-bashcd transaction-service
+
+```bash
+# Start Transaction Service
+cd transaction-service
 mvn spring-boot:run
+```
+
 Transaction Service will run on port 8083
-📡 API Endpoints
-User Service (Port 8082)
-Authentication
 
-POST /api/users/register - Register new user
-POST /api/users/login - User login (returns JWT token)
+---
 
-User Management
+## 📡 API Endpoints
 
-GET /api/users - Get all users
-GET /api/users/{username} - Get user by username
-POST /api/users/updatedUser - Update user information
-GET /api/users/{username}/accounts - Get user with associated accounts
+### User Service (Port 8082)
 
-Account Service (Port 8081)
+**Authentication**
 
-GET /api/accounts - Get all accounts
-GET /api/accounts/{userId} - Get accounts by user ID
-GET /api/accounts/number/{accountNumber} - Get account by account number
-POST /api/accounts - Create new account
-GET /api/accounts/user/{userId} - Get accounts by user ID (alternative endpoint)
+- `POST /api/users/register` - Register new user  
+- `POST /api/users/login` - User login (returns JWT token)  
 
-🛠️ Technology Stack
-Backend
+**User Management**
 
-Spring Boot 3.2.0 - Main framework
-Spring Cloud 2023.0.0 - Microservices infrastructure
-Spring Security - Authentication and authorization
-JWT - Token-based authentication
-Netflix Eureka - Service discovery
-OpenFeign - Service-to-service communication
-Spring Data JPA - Database abstraction for PostgreSQL
-Spring Data MongoDB - MongoDB integration
-Spring Boot AMQP - RabbitMQ integration
-MapStruct - Object mapping
-Lombok - Boilerplate code reduction
+- `GET /api/users` - Get all users  
+- `GET /api/users/{username}` - Get user by username  
+- `POST /api/users/updatedUser` - Update user information  
+- `GET /api/users/{username}/accounts` - Get user with associated accounts  
 
-Databases
+### Account Service (Port 8081)
 
-PostgreSQL - User data storage
-MongoDB - Account data storage
-Redis - Caching layer
+- `GET /api/accounts` - Get all accounts  
+- `GET /api/accounts/{userId}` - Get accounts by user ID  
+- `GET /api/accounts/number/{accountNumber}` - Get account by account number  
+- `POST /api/accounts` - Create new account  
+- `GET /api/accounts/user/{userId}` - Get accounts by user ID (alternative endpoint)  
 
-Message Broker
+---
 
-RabbitMQ - Asynchronous messaging
+## 🛠️ Technology Stack
 
-Documentation
+### Backend
 
-SpringDoc OpenAPI - API documentation
-Swagger UI - Interactive API documentation
+- Spring Boot 3.2.0 - Main framework  
+- Spring Cloud 2023.0.0 - Microservices infrastructure  
+- Spring Security - Authentication and authorization  
+- JWT - Token-based authentication  
+- Netflix Eureka - Service discovery  
+- OpenFeign - Service-to-service communication  
+- Spring Data JPA - Database abstraction for PostgreSQL  
+- Spring Data MongoDB - MongoDB integration  
+- Spring Boot AMQP - RabbitMQ integration  
+- MapStruct - Object mapping  
+- Lombok - Boilerplate code reduction  
 
-📊 Service Details
-User Service
+### Databases
 
-Handles user registration, authentication, and profile management
-Uses PostgreSQL for data persistence
-Implements JWT-based authentication
-Provides REST APIs for user operations
-Integrates with Account Service to fetch user accounts
+- PostgreSQL - User data storage  
+- MongoDB - Account data storage  
+- Redis - Caching layer  
 
-Account Service
+### Message Broker
 
-Manages bank accounts and account operations
-Uses MongoDB for flexible document storage
-Implements Redis caching for improved performance
-Provides REST APIs for account management
-Supports multiple account types and currencies
+- RabbitMQ - Asynchronous messaging  
 
-Transaction Service
+### Documentation
 
-Handles financial transactions (in development)
-Will integrate with both User and Account services
-Designed for high-volume transaction processing
+- SpringDoc OpenAPI - API documentation  
+- Swagger UI - Interactive API documentation  
 
-Eureka Server
+---
 
-Service registry and discovery
-Enables dynamic service communication
-Provides load balancing capabilities
+## 🔧 Configuration
 
-🔧 Configuration
-Key Configuration Files
+### Key Configuration Files
 
-eureka-server/src/main/resources/application.yml - Eureka server configuration
-user-service/src/main/resources/application.yml - User service configuration
-account-service/src/main/resources/application.yml - Account service configuration
-account-service/docker-compose.yml - Infrastructure services
+- `eureka-server/src/main/resources/application.yml` - Eureka server configuration  
+- `user-service/src/main/resources/application.yml` - User service configuration  
+- `account-service/src/main/resources/application.yml` - Account service configuration  
+- `account-service/docker-compose.yml` - Infrastructure services  
 
-Environment Variables
+### Environment Variables
+
 Make sure to configure the following in your environment:
-yaml# JWT Secret (configured in user-service application.yml)
+
+```yaml
+# JWT Secret (configured in user-service application.yml)
 jwt:
   secret: moja-super-tajna-wartosc
+```
 
-# Database configurations are already set in application.yml files
-📖 API Documentation
-Once the services are running, you can access the API documentation:
+Database configurations are already set in `application.yml` files.
 
-User Service: http://localhost:8082/swagger-ui.html
-Account Service: http://localhost:8081/swagger-ui.html
+---
 
-🐳 Docker Support
+## 📖 API Documentation
+
+Once the services are running, you can access the API documentation:  
+
+- User Service: [http://localhost:8082/swagger-ui.html](http://localhost:8082/swagger-ui.html)  
+- Account Service: [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)  
+
+---
+
+## 🐳 Docker Support
+
 The project includes Docker Compose configuration for infrastructure services. To start all required services:
-bashcd account-service
+
+```bash
+cd account-service
 docker-compose up -d
-🔐 Security
+```
 
-JWT-based authentication for secure API access
-Password encryption using BCrypt
-Service-to-service communication through Eureka
-Input validation on all endpoints
+---
 
-🚧 Development Status
+## 🔐 Security
 
-✅ User Service - Complete
-✅ Account Service - Complete
-✅ Eureka Server - Complete
-🚧 Transaction Service - In Development
+- JWT-based authentication for secure API access  
+- Password encryption using BCrypt  
+- Service-to-service communication through Eureka  
+- Input validation on all endpoints  
 
-🤝 Contributing
+---
 
-Fork the repository
-Create your feature branch (git checkout -b feature/AmazingFeature)
-Commit your changes (git commit -m 'Add some AmazingFeature')
-Push to the branch (git push origin feature/AmazingFeature)
-Open a Pull Request
+## 🚧 Development Status
 
-📝 License
+- ✅ User Service - Complete  
+- ✅ Account Service - Complete  
+- ✅ Eureka Server - Complete  
+- 🚧 Transaction Service - In Development  
+
+---
+
+## 🤝 Contributing
+
+- Fork the repository  
+- Create your feature branch (`git checkout -b feature/AmazingFeature`)  
+- Commit your changes (`git commit -m 'Add some AmazingFeature'`)  
+- Push to the branch (`git push origin feature/AmazingFeature`)  
+- Open a Pull Request  
+
+---
+
+## 📝 License
+
 This project is licensed under the MIT License - see the LICENSE file for details.
-📞 Support
+
+---
+
+## 📞 Support
+
 For support and questions, please open an issue in the GitHub repository.
 
-Note: This is a educational/demonstration project showcasing microservices architecture with Spring Boot and Spring Cloud.
+---
+
+**Note:** This is a educational/demonstration project showcasing microservices architecture with Spring Boot and Spring Cloud.
+
