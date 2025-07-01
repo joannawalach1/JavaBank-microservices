@@ -87,19 +87,9 @@
             <artifactId>spring-boot-starter-data-cassandra</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.banking</groupId>
-            <artifactId>account-service</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.banking</groupId>
-            <artifactId>user-service</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
-        </dependency>
-
-
     </dependencies>
 
     <dependencyManagement>

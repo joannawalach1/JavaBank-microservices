@@ -45,4 +45,11 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getAccountsByUserId(userId));
     }
 
+
+    @GetMapping("/id/{accountId}")
+    public ResponseEntity<List<AccountResponseDto>> getAccountById(@PathVariable Long accountId) {
+        List<AccountResponseDto> account = accountService.getAccountById(accountId);
+        return ResponseEntity.ok(account);
+    }
+
 }
