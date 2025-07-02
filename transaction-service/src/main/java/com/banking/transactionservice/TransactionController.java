@@ -15,7 +15,7 @@ public class TransactionController {
     public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
-    @PostMapping("/newTransaction")
+    @PostMapping
     public Transaction createTransaction(@RequestBody TransactionCreateRequest transactionCreateRequest) {
         return transactionService.createTransaction(transactionCreateRequest);
     }
