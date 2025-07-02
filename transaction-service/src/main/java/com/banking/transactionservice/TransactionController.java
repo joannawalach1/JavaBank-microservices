@@ -2,7 +2,7 @@ package com.banking.transactionservice;
 
 import com.banking.transactionservice.dto.TransactionCreateRequest;
 import com.banking.transactionservice.dto.TransactionResponseDto;
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,19 +15,14 @@ public class TransactionController {
     public TransactionController(TransactionService transactionService) {
         this.transactionService = transactionService;
     }
-    @PostMapping("/newTransaction")
+    @PostMapping
     public Transaction createTransaction(@RequestBody TransactionCreateRequest transactionCreateRequest) {
         return transactionService.createTransaction(transactionCreateRequest);
     }
 
     @GetMapping("/{transactionId}")
-    public TransactionResponseDto getTransactionById(@PathVariable String transactionId) {
+    public TransactionResponseDto getTransactionById(@PathVariable Long transactionId) {
         return transactionService.getTransactionsById(transactionId);
-    }
-
-    @GetMapping("/user/{userId}")
-    public List<TransactionResponseDto> getTransactionByUserId(@PathVariable String userId) {
-        return transactionService.getTransactionsByUserId(userId);
     }
 
     @GetMapping("/type/{transactionType}")
@@ -36,7 +31,4 @@ public class TransactionController {
             @PathVariable String transactionType) {
         return transactionService.getTransactionsByType(id, transactionType);
     }
-
-
-
 }

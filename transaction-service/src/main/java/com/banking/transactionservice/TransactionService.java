@@ -2,13 +2,11 @@ package com.banking.transactionservice;
 
 import com.banking.transactionservice.dto.TransactionCreateRequest;
 import com.banking.transactionservice.dto.TransactionResponseDto;
-import com.datastax.oss.driver.shaded.guava.common.collect.Maps;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +18,7 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public TransactionResponseDto getTransactionsById(String transactionId) {
+    public TransactionResponseDto getTransactionsById(Long transactionId) {
         Transaction byId = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found with id: " + transactionId));
         return TransactionMapper.toTransactionResponseDto(byId);
@@ -59,17 +57,6 @@ public class TransactionService {
         return transactionRepository.save(transactionEntity);
     }
 
-    public List<TransactionResponseDto> getTransactionsByAccountId(String accountId) {
-        return transactionRepository.findById(accountId).stream()
-                .map(TransactionMapper::toTransactionResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    public List<TransactionResponseDto> getTransactionsByUserId(String userId) {
-        return transactionRepository.findById(userId).stream()
-                .map(TransactionMapper::toTransactionResponseDto)
-                .collect(Collectors.toList());
-    }
     public List<TransactionResponseDto> getTransactionsByType(String userId, String type) {
         return transactionRepository.findByUserIdAndTransactionType(userId, type).stream()
                 .map(TransactionMapper::toTransactionResponseDto)
@@ -80,7 +67,11 @@ public class TransactionService {
                 .map(TransactionMapper::toTransactionResponseDto)
                 .collect(Collectors.toList());
     }
+
+    public List<TransactionResponseDto> getTransactionsByUserId(Long id) {
+        return null;
     }
+}
 
 
 

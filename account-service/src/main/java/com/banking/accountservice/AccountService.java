@@ -44,4 +44,9 @@ public class AccountService {
     public List<AccountResponseDto> getAccountsByUserId(Long userId) {
         return accountRepository.getAccountsByUserId(userId);
     }
+
+
+    public List<AccountResponseDto> getAccountById(Long accountId) {
+        return accountRepository.getAccountsByUserId(accountId);
+    }
 }
