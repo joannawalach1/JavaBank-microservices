@@ -86,4 +86,11 @@ public class UserService {
     }
 
 
+    public UserResponseDto findUserById(Long id) {
+        return userRepository.findById(id)
+                .map(UserMapper::mapToResponseDto)
+                .orElseThrow(() -> new RuntimeException("User not found: " + id));
+    }
+
 }
+

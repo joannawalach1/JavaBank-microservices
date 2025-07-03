@@ -23,6 +23,12 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
+    public Optional<User> findById(Long id) {
+
+        return null;
+    }
+
+    @Override
     public boolean existsByUsername(String username) {
         return users.values().stream()
                 .anyMatch(user -> user.getUsername().equals(username));
