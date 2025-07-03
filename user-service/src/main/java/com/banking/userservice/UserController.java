@@ -41,9 +41,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody UserLoginRequest request) {
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
         String token = userService.login(request);
-        return ResponseEntity.ok(new JwtResponse(token));
+        UserResponseDto userDto = userService.findUserByUsername(request.getUsername());
+
+        UserLoginResponse response = new UserLoginResponse(token, userDto);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/updatedUser")
