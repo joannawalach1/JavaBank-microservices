@@ -22,10 +22,16 @@ public class UserController {
         this.fullProfileClient = fullProfileClient;
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/username//{username}")
     public ResponseEntity<UserResponseDto> findUserByUsername(@PathVariable String username) {
         UserResponseDto userByUsername = userService.findUserByUsername(username);
         return ResponseEntity.status(HttpStatus.OK).body(userByUsername);
+    }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
+        UserResponseDto user = userService.findUserById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @GetMapping

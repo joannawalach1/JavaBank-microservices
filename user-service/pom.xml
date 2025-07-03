@@ -166,6 +166,12 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.banking</groupId>
+            <artifactId>transaction-service</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
         <!--        <dependency>-->
 <!--            <groupId>com.banking</groupId>-->
 <!--            <artifactId>account-service</artifactId>-->
