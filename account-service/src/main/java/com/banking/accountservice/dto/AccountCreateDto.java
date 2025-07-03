@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AccountCreateDto {
-    private Long id;
+    private String id;
     private String accountNumber;
     private String userId;
     private String accountType;
