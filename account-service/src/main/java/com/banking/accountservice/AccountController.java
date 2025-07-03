@@ -23,8 +23,8 @@ public class AccountController {
     }
 
     @GetMapping("/number/{accountNumber}")
-    public ResponseEntity<List<AccountResponseDto>> getAccountByNumber(@PathVariable String accountNumber) {
-        List<AccountResponseDto> accountByNumber = accountService.getAccountByNumber(accountNumber);
+    public ResponseEntity<Account> getAccountByNumber(@PathVariable String accountNumber) {
+        Account accountByNumber = accountService.getAccountByNumber(accountNumber);
         return ResponseEntity.ok().body(accountByNumber);
     }
 
@@ -41,8 +41,15 @@ public class AccountController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<AccountResponseDto>> getAccountsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<Account> getAccountsByUserId(@PathVariable String userId) {
         return ResponseEntity.ok(accountService.getAccountsByUserId(userId));
+    }
+
+
+    @GetMapping("/id/{accountId}")
+    public ResponseEntity<AccountResponseDto> getAccountById(@PathVariable Long accountId) {
+        AccountResponseDto account = accountService.getAccountById(accountId);
+        return ResponseEntity.ok(account);
     }
 
 }

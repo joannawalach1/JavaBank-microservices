@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Document(collection = "accounts")
 public class Account {
     @Id
-    private String id;
+    private Long id;
     private String accountNumber;
     private String userId;
     private String accountType;

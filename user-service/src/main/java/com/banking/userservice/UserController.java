@@ -1,11 +1,7 @@
 package com.banking.userservice;
 
 import com.banking.accountservice.dto.AccountResponseDto;
-import com.banking.userservice.dto.UserCreateDto;
-import com.banking.userservice.dto.UserLoginRequest;
-import com.banking.userservice.dto.UserResponseDto;
-import com.banking.userservice.dto.UserWithAccountsDto;
-import lombok.RequiredArgsConstructor;
+import com.banking.userservice.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +10,17 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final AccountClient accountClient;
+    private final FullProfileClient fullProfileClient;
+
+    public UserController(UserService userService, AccountClient accountClient, FullProfileClient fullProfileClient) {
+        this.userService = userService;
+        this.accountClient = accountClient;
+        this.fullProfileClient = fullProfileClient;
+    }
 
     @GetMapping("/{username}")
     public ResponseEntity<UserResponseDto> findUserByUsername(@PathVariable String username) {
@@ -39,9 +41,12 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody UserLoginRequest request) {
+    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
         String token = userService.login(request);
-        return ResponseEntity.ok(new JwtResponse(token));
+        UserResponseDto userDto = userService.findUserByUsername(request.getUsername());
+
+        UserLoginResponse response = new UserLoginResponse(token, userDto);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/updatedUser")
@@ -61,5 +66,11 @@ public class UserController {
         UserWithAccountsDto response = new UserWithAccountsDto(user, accounts);
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{username}/profile")
+    public ResponseEntity<UserFullProfileDto> getUserFullProfile(@PathVariable String username) {
+        UserFullProfileDto fullProfile = fullProfileClient.getUserFullProfile(username);
+        return ResponseEntity.ok(fullProfile);
     }
 }
