@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,10 +24,9 @@ public class AccountService {
     }
 
     @Cacheable(value = "account", key = "#accountNumber")
-    public List<AccountResponseDto> getAccountByNumber(String accountNumber) {
-        return accountRepository.findByAccountNumber(accountNumber).stream()
-                .map(accountMapper::toAccountResponseDto)
-                .collect(Collectors.toList());
+    public Account getAccountByNumber(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber)
+                .orElseThrow(() -> new RuntimeException("Account not found: " + accountNumber));
     }
 
     public AccountResponseDto createAccount(AccountCreateDto accountCreateDto) {
@@ -41,12 +41,14 @@ public class AccountService {
                 .collect(Collectors.toList());
     }
 
-    public List<AccountResponseDto> getAccountsByUserId(Long userId) {
-        return accountRepository.getAccountsByUserId(userId);
+    public Account getAccountsByUserId(String userId) {
+        return accountRepository.getAccountsByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("Account not found: "));
     }
 
 
-    public List<AccountResponseDto> getAccountById(Long accountId) {
-        return accountRepository.getAccountsByUserId(accountId);
-    }
+    public AccountResponseDto getAccountById(Long accountId)  {
+    return accountRepository.getAccountById(accountId)
+            .orElseThrow(() -> new RuntimeException("Account not found: " + accountId));
+}
 }
