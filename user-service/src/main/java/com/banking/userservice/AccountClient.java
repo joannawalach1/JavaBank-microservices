@@ -1,9 +1,7 @@
 package com.banking.userservice;
 
-import com.banking.accountservice.dto.AccountResponseDto;
-import com.banking.userservice.dto.UserFullProfileDto;
+import com.banking.userservice.dto.AccountResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

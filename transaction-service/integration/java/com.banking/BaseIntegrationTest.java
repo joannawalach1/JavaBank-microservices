@@ -44,7 +44,7 @@ public class BaseIntegrationTest {
             .build();
 
     @Container
-    static final CassandraContainer<?> cassandra =
+    static final CassandraContainer cassandra =
             new CassandraContainer<>("cassandra:4.0.6");
 
     @DynamicPropertySource

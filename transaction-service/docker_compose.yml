@@ -10,6 +10,6 @@ services:
       - CASSANDRA_DC=datacenter1
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
     volumes:
-      - cassandra_data:/var/lib/cassandra
+      - ./init.cql:/docker-entrypoint-initdb.d/init.cql
 volumes:
   cassandra_data:
