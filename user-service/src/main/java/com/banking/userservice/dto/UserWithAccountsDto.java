@@ -1,6 +1,6 @@
 package com.banking.userservice.dto;
 
-import com.banking.accountservice.dto.AccountResponseDto;
+import com.banking.userservice.dto.AccountResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,4 +19,5 @@ public class UserWithAccountsDto {
         this.email = user.getEmail();
         this.accounts = accounts;
     }
+
 }

@@ -1,6 +1,6 @@
 package com.banking.userservice;
 
-import com.banking.accountservice.dto.AccountResponseDto;
+import com.banking.userservice.dto.AccountResponseDto;
 import com.banking.userservice.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
