@@ -12,15 +12,16 @@ import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table("transactions")
+
 public class Transaction {
     @PrimaryKey
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private UUID id = UUID.randomUUID();
     private Long userId;
     private Long accountId;
     private Long accountFrom;

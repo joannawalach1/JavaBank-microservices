@@ -39,7 +39,7 @@ public class TransactionService {
         if (accountFrom == null || accountTo == null || accountFrom.equals(accountTo)) {
             throw new IllegalArgumentException("Source and destination accounts cannot be the same or null");
         }
-        String id = UUID.randomUUID().toString();
+        UUID id = UUID.randomUUID();
         Transaction transactionEntity = TransactionMapper.toTransactionEntity(
                 new TransactionResponseDto(
                         id,

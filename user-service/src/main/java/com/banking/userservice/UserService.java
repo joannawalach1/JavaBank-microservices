@@ -81,7 +81,6 @@ public class UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid username or password");
         }
-
         return jwtService.generateToken(user);
     }
 

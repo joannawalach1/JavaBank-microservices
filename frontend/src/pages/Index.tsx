@@ -166,15 +166,24 @@ const Index = () => {
   const handleLogin = async (email: string, password: string) => {
     // Simulate API call to your Java backend
     try {
-      // In real app: const response = await fetch('/api/auth/login', { ... })
-      
+      const response = await fetch('http://localhost:8080/api/users/login', {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+         email: email,
+         password: password
+      }),
+      });
+
       // Mock successful login
       const mockUser: User = {
         id: "user_123",
         name: "Jan Kowalski",
         email: email
       };
-      
+
       setUser(mockUser);
       toast({
         title: "Login Successful",
@@ -189,40 +198,63 @@ const Index = () => {
     }
   };
 
-  const handleRegister = async (name: string, email: string, password: string) => {
-    // Simulate API call to your Java backend
-    try {
-      // In real app: const response = await fetch('/api/auth/register', { ... })
-      
-      // Mock successful registration
-      const mockUser: User = {
-        id: "user_new",
-        name: name,
-        email: email
-      };
-      
-      setUser(mockUser);
-      toast({
-        title: "Registration Successful",
-        description: `Welcome to JavaBank, ${mockUser.name}!`,
-      });
-    } catch (error) {
-      toast({
-        title: "Registration Failed", 
-        description: "Unable to create account. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    setCurrentView("dashboard");
-    toast({
-      title: "Logged Out",
-      description: "You have been successfully logged out.",
+const handleRegister = async (username: string, email: string, password: string) => {
+  try {
+    const response = await fetch("http://localhost:8080/api/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        password: password,
+      }),
     });
-  };
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("❌ Błąd rejestracji (status != 2xx):", errorText);
+      return;
+    }
+
+    const data = await response.json();
+    console.log("✅ Użytkownik zarejestrowany:", data);
+
+    const mockUser: User = {
+      id: data.id ?? "user_new", // Zakładamy, że backend zwraca ID
+      name: username,
+      email: email,
+    };
+
+    setUser(mockUser); // Zakładając, że masz setUser ze stanu
+
+    toast({
+      title: "Rejestracja udana",
+      description: "Zaloguj się aby kontynuować",
+    });
+
+    // Możesz też od razu zalogować lub przekierować na login
+    setCurrentView("dashboard");
+
+  } catch (error) {
+    console.error("❌ Błąd rejestracji (fetch):", error);
+    toast({
+      title: "Błąd rejestracji",
+      description: "Nie udało się połączyć z serwerem.",
+      variant: "destructive",
+    });
+  }
+};
+
+const handleLogout = () => {
+  setUser(null);
+  setCurrentView("dashboard"); // Lub 'login', w zależności od logiki
+  toast({
+    title: "Logged Out",
+    description: "You have been successfully logged out.",
+  });
+};
 
   const handleTransfer = (fromAccountId: string, toAccountId: string, amount: number, description: string) => {
     // Simulate API call to your Java backend
