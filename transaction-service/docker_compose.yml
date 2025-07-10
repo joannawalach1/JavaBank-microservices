@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   cassandra:
-    image: cassandra:latest
-    container_name: cassandra-banking
+    image: cassandra:4.1
+    container_name: cassandra
     ports:
       - "9042:9042"
     environment:
       - CASSANDRA_CLUSTER_NAME=banking-cluster
-      - CASSANDRA_DC=dc1
+      - CASSANDRA_DC=datacenter1
       - CASSANDRA_RACK=rack1
     volumes:
       - cassandra_data:/var/lib/cassandra
@@ -19,7 +19,7 @@ services:
       retries: 10
 
   cassandra-init:
-    image: cassandra:latest
+    image: cassandra:4.1
     depends_on:
       cassandra:
         condition: service_healthy
@@ -33,7 +33,7 @@ services:
           sleep 5
         done
         echo 'Cassandra is ready. Running initialization...'
-        cqlsh cassandra -f /init.cql
+        cqlsh cassandra -f ./init.cql
         echo 'Initialization completed.'
       "
     restart: "no"
