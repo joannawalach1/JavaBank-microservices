@@ -106,7 +106,7 @@ public class InMemoryAccountRepository implements AccountRepository {
 
     @Override
     public <S extends Account> S save(S entity) {
-        accounts.put(entity.getId(), entity);
+        accounts.put(Long.valueOf(entity.getId()), entity);
         return entity;
     }
 

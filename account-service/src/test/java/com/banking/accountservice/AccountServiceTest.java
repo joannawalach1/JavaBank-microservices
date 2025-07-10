@@ -22,7 +22,7 @@ public class AccountServiceTest {
         inMemoryAccountRepository = new InMemoryAccountRepository();
         accountMapper = new AccountMapperImpl();
         accountService = new AccountService(inMemoryAccountRepository, accountMapper);
-        accountResponseDto = accountService.createAccount(new AccountCreateDto(1L, "PL61109010140000071219812874", "user123", "SAVINGS", new BigDecimal("1500.00"), "PLN", "Active"));
+        accountResponseDto = accountService.createAccount(new AccountCreateDto("1L", "PL61109010140000071219812874", "user123", "SAVINGS", new BigDecimal("1500.00"), "PLN", "Active"));
     }
 
     @Test

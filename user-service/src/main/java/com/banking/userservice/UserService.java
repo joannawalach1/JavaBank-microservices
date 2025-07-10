@@ -81,9 +81,15 @@ public class UserService {
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid username or password");
         }
-
         return jwtService.generateToken(user);
     }
 
 
+    public UserResponseDto findUserById(Long id) {
+        return userRepository.findById(id)
+                .map(UserMapper::mapToResponseDto)
+                .orElseThrow(() -> new RuntimeException("User not found: " + id));
+    }
+
 }
+

@@ -9,8 +9,7 @@ import com.banking.userservice.dto.UserResponseDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,7 +21,7 @@ public class UserServiceIntegrationTest extends BaseIntegrationTest {
     private UserRepository userRepository;
     @Test
     public void shouldRegisterAndLoginUser() {
-        // register
+        // 1. Rejestracja użytkownika
         UserCreateDto userCreateDto = new UserCreateDto("JoeD1", "joe@op.pl", "Joe", "Does", "password", "234567890");
         ResponseEntity<UserResponseDto> registerResponse = restTemplate.postForEntity(
                 "/api/users/register",
@@ -35,7 +34,7 @@ public class UserServiceIntegrationTest extends BaseIntegrationTest {
         assertEquals("JoeD1", registerResponse.getBody().getUsername());
         assertEquals("joe@op.pl", registerResponse.getBody().getEmail());
 
-        // login
+        // 2. Logowanie
         UserLoginRequest userLoginRequest = new UserLoginRequest("JoeD1", "password");
 
         ResponseEntity<JwtResponse> loginResponse = restTemplate.postForEntity(
@@ -43,9 +42,22 @@ public class UserServiceIntegrationTest extends BaseIntegrationTest {
                 userLoginRequest,
                 JwtResponse.class
         );
+        UserResponseDto registeredUser = registerResponse.getBody();
 
         assertEquals(HttpStatus.OK, loginResponse.getStatusCode());
         assertNotNull(loginResponse.getBody());
+
+        //3. Pobieranie po id
+        Long id = registeredUser.getId();
+        ResponseEntity<UserResponseDto> getByIdResponse = restTemplate.getForEntity(
+                "/api/users/id/" + id,
+                UserResponseDto.class
+        );
+        assertEquals(HttpStatus.OK, loginResponse.getStatusCode());
+        String token = loginResponse.getBody().getToken();
+        assertNotNull(token);
+
+
     }
 }
 

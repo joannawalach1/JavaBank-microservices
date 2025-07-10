@@ -1,6 +1,6 @@
 package com.banking.userservice;
 
-import com.banking.accountservice.dto.AccountResponseDto;
+import com.banking.userservice.dto.AccountResponseDto;
 import com.banking.userservice.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
     private final UserService userService;
@@ -22,10 +23,16 @@ public class UserController {
         this.fullProfileClient = fullProfileClient;
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/username//{username}")
     public ResponseEntity<UserResponseDto> findUserByUsername(@PathVariable String username) {
         UserResponseDto userByUsername = userService.findUserByUsername(username);
         return ResponseEntity.status(HttpStatus.OK).body(userByUsername);
+    }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
+        UserResponseDto user = userService.findUserById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @GetMapping
