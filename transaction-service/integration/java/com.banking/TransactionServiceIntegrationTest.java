@@ -30,8 +30,8 @@ public class TransactionServiceIntegrationTest extends BaseIntegrationTest {
         assertEquals(HttpStatus.OK, registerResponse.getStatusCode());
         assertNotNull(registerResponse.getBody());
         TransactionResponseDto registeredTransaction = registerResponse.getBody();
-        assertEquals("456L", registerResponse.getBody().getAccountId());
-        assertEquals("123L", registerResponse.getBody().getUserId());
+        assertEquals(456L, registerResponse.getBody().getAccountId());
+        assertEquals(123L, registerResponse.getBody().getUserId());
 
         // 2. Pobranie transakcji po ID
         Long id = registeredTransaction.getAccountId();
