@@ -14,7 +14,7 @@ import java.util.UUID;
 public class TransactionResponseDto {
     private UUID id;
     private Long userId;
-    private Long accountId;
+    private String accountId;
     private Long accountFrom;
     private BigDecimal amount;
     private String currency;

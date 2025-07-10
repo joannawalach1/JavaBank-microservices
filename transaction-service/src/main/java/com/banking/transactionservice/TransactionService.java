@@ -18,7 +18,7 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public TransactionResponseDto getTransactionsById(Long transactionId) {
+    public TransactionResponseDto getTransactionsById(UUID transactionId) {
         Transaction byId = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found with id: " + transactionId));
         return TransactionMapper.toTransactionResponseDto(byId);
@@ -27,7 +27,7 @@ public class TransactionService {
     public Transaction createTransaction(TransactionCreateRequest transactionCreateRequest) {
         BigDecimal amount = transactionCreateRequest.getAmount();
         Long accountFrom = transactionCreateRequest.getAccountFrom();
-        Long accountTo = transactionCreateRequest.getAccountId();
+        String accountTo = transactionCreateRequest.getAccountId();
         Long userId = transactionCreateRequest.getUserId();
         String currency = transactionCreateRequest.getCurrency();
         String transactionType = transactionCreateRequest.getTransactionType();
@@ -57,8 +57,8 @@ public class TransactionService {
         return transactionRepository.save(transactionEntity);
     }
 
-    public List<TransactionResponseDto> getTransactionsByType(String userId, String type) {
-        return transactionRepository.findByUserIdAndTransactionType(userId, type).stream()
+    public List<TransactionResponseDto> getTransactionsByType(String userId) {
+        return transactionRepository.findByUserIdAndTransactionType(userId).stream()
                 .map(TransactionMapper::toTransactionResponseDto)
                 .collect(Collectors.toList());
     }
@@ -70,6 +70,12 @@ public class TransactionService {
 
     public List<TransactionResponseDto> getTransactionsByUserId(Long id) {
         return null;
+    }
+
+    public List<TransactionResponseDto> getAllTransactions() {
+        return transactionRepository.findAll().stream()
+                .map(TransactionMapper::toTransactionResponseDto)
+                .collect(Collectors.toList());
     }
 }
 
