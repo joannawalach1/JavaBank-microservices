@@ -10,17 +10,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:3000")
+
 public class UserController {
 
     private final UserService userService;
     private final AccountClient accountClient;
     private final FullProfileClient fullProfileClient;
+    private final JwtService jwtService;
 
-    public UserController(UserService userService, AccountClient accountClient, FullProfileClient fullProfileClient) {
+    public UserController(UserService userService, AccountClient accountClient, FullProfileClient fullProfileClient, JwtService jwtService) {
         this.userService = userService;
         this.accountClient = accountClient;
         this.fullProfileClient = fullProfileClient;
+        this.jwtService = jwtService;
     }
 
     @GetMapping("/username//{username}")
@@ -48,12 +50,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
-        String token = userService.login(request);
-        UserResponseDto userDto = userService.findUserByUsername(request.getUsername());
-
-        UserLoginResponse response = new UserLoginResponse(token, userDto);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JwtResponse> login(@RequestBody UserLoginRequest request) {
+        JwtResponse token = userService.login(request);
+        return ResponseEntity.ok(new JwtResponse(token.getToken()));
     }
 
     @PostMapping("/updatedUser")
@@ -75,9 +74,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{username}/profile")
-    public ResponseEntity<UserFullProfileDto> getUserFullProfile(@PathVariable String username) {
-        UserFullProfileDto fullProfile = fullProfileClient.getUserFullProfile(username);
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserFullProfileDto> getUserFullProfile(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+        String username = jwtService.extractUsername(token);
+        UserFullProfileDto fullProfile = userService.getUserFullProfile(username);
         return ResponseEntity.ok(fullProfile);
     }
 }

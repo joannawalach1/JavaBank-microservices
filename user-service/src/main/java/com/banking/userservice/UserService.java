@@ -1,12 +1,15 @@
 package com.banking.userservice;
 
 import com.banking.userservice.dto.UserCreateDto;
+import com.banking.userservice.dto.UserFullProfileDto;
 import com.banking.userservice.dto.UserLoginRequest;
 import com.banking.userservice.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,6 +20,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+
     public List<UserResponseDto> findAllUsers() {
         return userRepository.findAll().stream()
                 .map(UserMapper::mapToResponseDto)
@@ -75,13 +79,14 @@ public class UserService {
         return UserMapper.mapToResponseDto(savedUser);
     }
 
-    public String login(UserLoginRequest request) {
+    public JwtResponse login(UserLoginRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("Invalid username or password"));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid username or password");
         }
-        return jwtService.generateToken(user);
+        String token = jwtService.generateToken(user);
+        return new JwtResponse(token);
     }
 
 
@@ -91,5 +96,18 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found: " + id));
     }
 
+    public UserFullProfileDto getUserFullProfile(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User with username '" + username + "' was not found"));
+
+        UserFullProfileDto dto = new UserFullProfileDto();
+        dto.setId(user.getId());
+        dto.setName(user.getUsername());
+        dto.setEmail(user.getEmail());
+        // Dodaj inne pola, które chcesz zwrócić
+
+        return dto;
+    }
 }
+
 

@@ -20,7 +20,7 @@ public class TransactionServiceIntegrationTest extends BaseIntegrationTest {
     @Test
     public void should_create_new_transaction() {
         // 1. Tworzymy nową transakcję
-        TransactionCreateRequest transactionCreateRequest = new TransactionCreateRequest(123L, 456L, 789L, new BigDecimal("500.00"), "USD", "TRANSFER");
+        TransactionCreateRequest transactionCreateRequest = new TransactionCreateRequest(123L, "456L", 789L, new BigDecimal("500.00"), "USD", "TRANSFER");
         ResponseEntity<TransactionResponseDto> registerResponse = restTemplate.postForEntity(
                 "/api/transactions",
                 transactionCreateRequest,
@@ -34,13 +34,13 @@ public class TransactionServiceIntegrationTest extends BaseIntegrationTest {
         assertEquals(123L, registerResponse.getBody().getUserId());
 
         // 2. Pobranie transakcji po ID
-        Long id = registeredTransaction.getAccountId();
+        String id = registeredTransaction.getAccountId();
         ResponseEntity<TransactionResponseDto> getByAccountIdResponse = restTemplate.getForEntity(
                 "/api/transactions/" + id,
                 TransactionResponseDto.class
         );
         assertEquals(HttpStatus.OK, getByAccountIdResponse.getStatusCode());
-        Long accountId = Objects.requireNonNull(getByAccountIdResponse.getBody()).getAccountId();
+        String accountId = Objects.requireNonNull(getByAccountIdResponse.getBody()).getAccountId();
         assertNotNull(accountId);
     }
 }
