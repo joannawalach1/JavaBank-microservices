@@ -162,54 +162,90 @@ const Index = () => {
       status: "pending"
     }
   ]);
+const handleLogin = async (username: string, password: string) => {
+  try {
+    console.log("🔐 Próba logowania...");
 
-  const handleLogin = async (email: string, password: string) => {
-    // Simulate API call to your Java backend
-    try {
-      const response = await fetch('http://localhost:8080/api/users/login', {
+    // 1. Logowanie — pobranie tokena
+    const response = await fetch('http://localhost:8080/api/users/login', {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-         email: email,
-         password: password
+        username,
+        password,
       }),
-      });
+    });
 
-      // Mock successful login
-      const mockUser: User = {
-        id: "user_123",
-        name: "Jan Kowalski",
-        email: email
-      };
+    console.log("📡 Odpowiedź z loginu:", response.status);
 
-      setUser(mockUser);
-      toast({
-        title: "Login Successful",
-        description: `Welcome back, ${mockUser.name}!`,
-      });
-    } catch (error) {
-      toast({
-        title: "Login Failed",
-        description: "Invalid credentials. Please try again.",
-        variant: "destructive",
-      });
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("❌ Błąd logowania:", errText);
+      throw new Error("Invalid credentials");
     }
-  };
+
+    const data = await response.json();
+    console.log("✅ Token odebrany:", data.token);
+    const token = data.token;
+
+    // 2. Zapisz token JWT w localStorage
+    localStorage.setItem("jwtToken", token);
+
+    // 3. Pobierz profil użytkownika
+    console.log("📥 Pobieranie profilu z tokenem...");
+    const profileResponse = await fetch('http://localhost:8080/api/users/profile', {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    console.log("📡 Odpowiedź z profilu:", profileResponse.status);
+
+    if (!profileResponse.ok) {
+      const errText = await profileResponse.text();
+      console.error("❌ Błąd pobierania profilu:", errText);
+      throw new Error("Failed to fetch user profile");
+    }
+
+    const userData = await profileResponse.json();
+    console.log("👤 Dane użytkownika:", userData);
+
+    // 4. Ustaw dane użytkownika w stanie
+    setUser({
+      id: userData.id,
+      name: userData.name,   // uwaga na "name" a nie "username"
+      email: userData.email,
+    });
+
+    // 5. Pokaż powiadomienie
+    toast({
+      title: "Login Successful",
+      description: `Welcome back, ${userData.name}!`,
+    });
+
+  } catch (error: any) {
+    console.error("💥 Błąd:", error.message);
+    toast({
+      title: "Login Failed",
+      description: error.message || "Something went wrong",
+      variant: "destructive",
+    });
+  }
+};
+
+
+
 
 const handleRegister = async (username: string, email: string, password: string) => {
   try {
     const response = await fetch("http://localhost:8080/api/users/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username: username,
-        email: email,
-        password: password,
-      }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password }),
     });
 
     if (!response.ok) {

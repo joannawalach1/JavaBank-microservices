@@ -7,22 +7,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Lock, Mail, User } from "lucide-react";
 
 interface LoginFormProps {
-  onLogin: (email: string, password: string) => void;
-  onRegister: (name: string, email: string, password: string) => void;
+  onLogin: (username: string, password: string) => void;
+  onRegister: (username: string, email: string, password: string) => void;
 }
 
 export function LoginForm({ onLogin, onRegister }: LoginFormProps) {
-  const [loginData, setLoginData] = useState({ email: "", password: "" });
-  const [registerData, setRegisterData] = useState({ name: "", email: "", password: "" });
+  const [loginData, setLoginData] = useState({ username: "", password: "" });
+  const [registerData, setRegisterData] = useState({ username: "", email: "", password: "" });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    onLogin(loginData.email, loginData.password);
+    onLogin(loginData.username, loginData.password);
   };
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    onRegister(registerData.name, registerData.email, registerData.password);
+    onRegister(registerData.username, registerData.email, registerData.password);
   };
 
   return (
@@ -58,11 +58,11 @@ export function LoginForm({ onLogin, onRegister }: LoginFormProps) {
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                       <Input
                         id="login-email"
-                        type="email"
+                        type="text"
                         placeholder="Enter your email"
                         className="pl-10"
-                        value={loginData.email}
-                        onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                        value={loginData.username}
+                        onChange={(e) => setLoginData({ ...loginData, username: e.target.value })}
                         required
                       />
                     </div>
@@ -99,8 +99,8 @@ export function LoginForm({ onLogin, onRegister }: LoginFormProps) {
                         type="text"
                         placeholder="Enter your full name"
                         className="pl-10"
-                        value={registerData.name}
-                        onChange={(e) => setRegisterData({ ...registerData, name: e.target.value })}
+                        value={registerData.username}
+                        onChange={(e) => setRegisterData({ ...registerData, username: e.target.value })}
                         required
                       />
                     </div>

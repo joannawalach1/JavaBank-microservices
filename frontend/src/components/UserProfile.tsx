@@ -148,7 +148,7 @@ export function UserProfile({ user, onUpdateProfile, onBack }: UserProfileProps)
                     <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input
                       id="name"
-                      value={formData.name}
+                      value={formData.username}
                       onChange={(e) => setFormData({...formData, name: e.target.value})}
                       disabled={!isEditing}
                       className="pl-10"
