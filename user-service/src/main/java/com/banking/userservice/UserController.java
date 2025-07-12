@@ -15,10 +15,10 @@ public class UserController {
 
     private final UserService userService;
     private final AccountClient accountClient;
-    private final FullProfileClient fullProfileClient;
+    private final TransactionClient fullProfileClient;
     private final JwtService jwtService;
 
-    public UserController(UserService userService, AccountClient accountClient, FullProfileClient fullProfileClient, JwtService jwtService) {
+    public UserController(UserService userService, AccountClient accountClient, TransactionClient fullProfileClient, JwtService jwtService) {
         this.userService = userService;
         this.accountClient = accountClient;
         this.fullProfileClient = fullProfileClient;

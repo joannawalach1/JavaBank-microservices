@@ -6,7 +6,6 @@ import com.banking.userservice.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,7 +22,7 @@ public class UserFullProfileDto {
     private List<Transaction> transactions;
 
 
-    public UserFullProfileDto(User user, ResponseEntity<Account[]> accountsResponse, List<Transaction> allTransactions) {
+    public UserFullProfileDto(User user, List<AccountResponseDto> accountsResponse, List<Transaction> allTransactions) {
         this.id = user.getId();
         this.name = user.getFirstName() + " " + user.getSurname();
         this.email = user.getEmail();

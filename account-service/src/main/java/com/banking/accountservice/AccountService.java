@@ -2,10 +2,14 @@ package com.banking.accountservice;
 
 import com.banking.accountservice.dto.AccountCreateDto;
 import com.banking.accountservice.dto.AccountResponseDto;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,4 +55,15 @@ public class AccountService {
     return accountRepository.getAccountById(accountId)
             .orElseThrow(() -> new RuntimeException("Account not found: " + accountId));
 }
+
+    @Transactional
+    public void updateBalance(String accountId, BigDecimal amount) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+
+        account.setBalance(account.getBalance().add(amount));
+        account.setUpdatedAt(LocalDateTime.now());
+
+        accountRepository.save(account);
+    }
 }
