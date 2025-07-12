@@ -1,5 +1,7 @@
 package com.banking.accountservice;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
@@ -21,10 +23,12 @@ public class Account {
     private String id;
     private String accountNumber;
     private String userId;
-    private String accountType;
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType = AccountType.SAVINGS;
     private BigDecimal balance;
     private String currency;
-    private String status = "Active";
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status = AccountStatus.ACTIVE;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

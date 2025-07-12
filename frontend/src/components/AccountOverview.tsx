@@ -1,18 +1,23 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { 
-  CreditCard, 
-  TrendingUp, 
-  TrendingDown, 
+import {
+  CreditCard,
+  TrendingUp,
   Eye,
   EyeOff,
   MoreHorizontal,
   Settings,
   Copy,
-  QrCode
+  QrCode,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -24,199 +29,169 @@ import { useToast } from "@/hooks/use-toast";
 
 interface Account {
   id: string;
-  type: string;
-  balance: number;
+  accountType: string;
   accountNumber: string;
+  balance: number;
   currency: string;
-  status: "active" | "frozen" | "closed";
+  status: "ACTIVE" | "FROZEN" | "CLOSED";
   creditLimit?: number;
   interestRate?: number;
   monthlyLimit?: number;
   usedThisMonth?: number;
 }
 
-interface AccountOverviewProps {
-  accounts: Account[];
-  showBalance: boolean;
-  onToggleBalance: () => void;
-  onManageAccount: (accountId: string) => void;
-}
-
-export function AccountOverview({ 
-  accounts, 
-  showBalance, 
-  onToggleBalance, 
-  onManageAccount 
-}: AccountOverviewProps) {
+export function AccountOverview() {
+  const [accounts, setAccounts] = useState<Account[]>([]);
+  const [showBalance, setShowBalance] = useState(true);
   const { toast } = useToast();
 
-  const formatCurrency = (amount: number, currency = 'PLN') => {
-    return new Intl.NumberFormat('pl-PL', {
-      style: 'currency',
-      currency: currency
+  const formatCurrency = (amount: number, currency = "PLN") =>
+    new Intl.NumberFormat("pl-PL", {
+      style: "currency",
+      currency,
     }).format(amount);
-  };
 
-  const formatAccountNumber = (number: string) => {
-    return number.replace(/(\d{4})/g, '$1 ').trim();
-  };
+  const formatAccountNumber = (number: string) =>
+    number.replace(/(\d{4})/g, "$1 ").trim();
 
   const copyAccountNumber = (accountNumber: string) => {
     navigator.clipboard.writeText(accountNumber);
     toast({
-      title: "Copied",
-      description: "Account number copied to clipboard",
+      title: "Skopiowano",
+      description: "Numer konta został skopiowany do schowka",
     });
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active": return "bg-success/10 text-success border-success/20";
-      case "frozen": return "bg-warning/10 text-warning border-warning/20";
-      case "closed": return "bg-destructive/10 text-destructive border-destructive/20";
-      default: return "bg-muted";
-    }
-  };
-
-  const getAccountIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "credit card":
-      case "credit":
-        return <CreditCard className="h-5 w-5 text-primary" />;
+      case "ACTIVE":
+        return "bg-green-100 text-green-800 border-green-300";
+      case "FROZEN":
+        return "bg-yellow-100 text-yellow-800 border-yellow-300";
+      case "CLOSED":
+        return "bg-red-100 text-red-800 border-red-300";
       default:
-        return <CreditCard className="h-5 w-5 text-primary" />;
+        return "bg-gray-200 text-gray-700 border-gray-300";
     }
   };
 
-  const calculateUsagePercentage = (used: number, limit: number) => {
-    return Math.min((used / limit) * 100, 100);
+  const fetchAccounts = async () => {
+    try {
+      const token = localStorage.getItem("jwtToken");
+      const res = await fetch("http://localhost:8080/api/accounts/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error("Nie udało się pobrać kont");
+      const data = await res.json();
+      setAccounts(data);
+      console.log("Dane kont:", data);
+    } catch (error) {
+      console.error("❌ Błąd ładowania kont:", error);
+    }
   };
+
+  useEffect(() => {
+    fetchAccounts();
+  }, []);
+
+  const calculateUsagePercentage = (used: number, limit: number) =>
+    Math.min((used / limit) * 100, 100);
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">Account Overview</h3>
-          <p className="text-sm text-muted-foreground">Manage your banking accounts</p>
+          <h2 className="text-xl font-bold">Przegląd kont</h2>
+          <p className="text-sm text-muted-foreground">
+            Wszystkie Twoje konta bankowe w jednym miejscu
+          </p>
         </div>
         <Button
           variant="outline"
           size="sm"
-          onClick={onToggleBalance}
-          className="flex items-center space-x-2"
+          onClick={() => setShowBalance(!showBalance)}
         >
-          {showBalance ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-          <span>{showBalance ? "Hide" : "Show"} Balances</span>
+          {showBalance ? <Eye className="mr-2 h-4 w-4" /> : <EyeOff className="mr-2 h-4 w-4" />}
+          {showBalance ? "Ukryj salda" : "Pokaż salda"}
         </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {accounts.map((account) => (
-          <Card key={account.id} className="shadow-card hover:shadow-hover transition-all duration-300 group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+          <Card key={account.id} className="group shadow-md hover:shadow-lg transition-shadow">
+            <CardHeader className="flex justify-between items-start space-y-0 pb-2">
               <div className="flex items-center space-x-3">
-                <div className="bg-gradient-primary p-2 rounded-lg">
-                  {getAccountIcon(account.type)}
+                <div className="p-2 rounded-md bg-blue-100">
+                  <CreditCard className="text-blue-600 h-5 w-5" />
                 </div>
                 <div>
-                  <CardTitle className="text-base font-medium">
-                    {account.type}
+                  <CardTitle className="text-base font-semibold">
+                    {account.accountType}
                   </CardTitle>
                   <Badge className={getStatusColor(account.status)} variant="outline">
                     {account.status}
                   </Badge>
                 </div>
               </div>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100">
                     <MoreHorizontal className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => onManageAccount(account.id)}>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Manage Account
-                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => copyAccountNumber(account.accountNumber)}>
                     <Copy className="mr-2 h-4 w-4" />
-                    Copy Account Number
+                    Kopiuj numer konta
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <QrCode className="mr-2 h-4 w-4" />
-                    Show QR Code
+                    Pokaż kod QR
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </CardHeader>
-            
+
             <CardContent className="space-y-4">
-              {/* Balance */}
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Current Balance</p>
+                <p className="text-sm text-muted-foreground mb-1">Saldo</p>
                 <p className="text-2xl font-bold">
-                  {showBalance ? formatCurrency(account.balance, account.currency) : "••••••"}
+                  {showBalance
+                    ? formatCurrency(account.balance, account.currency)
+                    : "••••••"}
                 </p>
               </div>
 
-              {/* Account Number */}
               <div>
-                <p className="text-sm text-muted-foreground mb-1">Account Number</p>
+                <p className="text-sm text-muted-foreground mb-1">Numer konta</p>
                 <p className="font-mono text-sm">{formatAccountNumber(account.accountNumber)}</p>
               </div>
 
-              {/* Credit Limit (for credit accounts) */}
               {account.creditLimit && (
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm text-muted-foreground">Credit Limit</p>
-                    <p className="text-sm font-medium">
-                      {showBalance ? formatCurrency(account.creditLimit) : "••••••"}
-                    </p>
-                  </div>
-                  <Progress 
-                    value={calculateUsagePercentage(account.balance, account.creditLimit)} 
+                <div>
+                  <p className="text-sm text-muted-foreground mb-1">Limit kredytowy</p>
+                  <Progress
+                    value={calculateUsagePercentage(account.balance, account.creditLimit)}
                     className="h-2"
                   />
-                  <p className="text-xs text-muted-foreground">
-                    {showBalance ? 
-                      `${formatCurrency(account.creditLimit - account.balance)} available` : 
-                      "•••••• available"
-                    }
+                  <p className="text-xs mt-1">
+                    {showBalance
+                      ? `${formatCurrency(account.creditLimit - account.balance)} dostępne`
+                      : "•••••• dostępne"}
                   </p>
                 </div>
               )}
 
-              {/* Monthly Spending (for accounts with limits) */}
-              {account.monthlyLimit && account.usedThisMonth !== undefined && (
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <p className="text-sm text-muted-foreground">This Month</p>
-                    <p className="text-sm font-medium">
-                      {showBalance ? 
-                        `${formatCurrency(account.usedThisMonth)} / ${formatCurrency(account.monthlyLimit)}` : 
-                        "•••••• / ••••••"
-                      }
-                    </p>
-                  </div>
-                  <Progress 
-                    value={calculateUsagePercentage(account.usedThisMonth, account.monthlyLimit)} 
-                    className="h-2"
-                  />
-                </div>
-              )}
-
-              {/* Interest Rate */}
               {account.interestRate && (
-                <div className="flex justify-between items-center">
-                  <p className="text-sm text-muted-foreground">Interest Rate</p>
-                  <div className="flex items-center space-x-1">
-                    <TrendingUp className="h-3 w-3 text-success" />
-                    <p className="text-sm font-medium text-success">
-                      {account.interestRate}%
-                    </p>
-                  </div>
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>Oprocentowanie</span>
+                  <span className="text-green-600 font-medium">
+                    <TrendingUp className="inline-block h-4 w-4 mr-1" />
+                    {account.interestRate}%
+                  </span>
                 </div>
               )}
             </CardContent>
