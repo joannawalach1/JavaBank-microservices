@@ -1,5 +1,6 @@
 package com.banking.transactionservice;
 
+import com.banking.transactionservice.dto.AccountUpdateRequestDto;
 import com.banking.transactionservice.dto.TransactionCreateRequest;
 import com.banking.transactionservice.dto.TransactionResponseDto;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,11 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final AccountClient accountClient;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(TransactionRepository transactionRepository, AccountClient accountClient) {
         this.transactionRepository = transactionRepository;
+        this.accountClient = accountClient;
     }
 
     public TransactionResponseDto getTransactionsById(UUID transactionId) {
@@ -54,8 +57,15 @@ public class TransactionService {
                 )
         );
 
-        return transactionRepository.save(transactionEntity);
+        Transaction savedTransaction = transactionRepository.save(transactionEntity);
+        AccountUpdateRequestDto request = new AccountUpdateRequestDto(
+                transactionCreateRequest.getAmount(),
+                transactionCreateRequest.getTransactionType(),
+                transactionCreateRequest.getAccountId()
+        );
 
+        accountClient.updateBalance(transactionCreateRequest.getAccountId(), request);
+        return savedTransaction;
     }
 
     public List<TransactionResponseDto> getTransactionsByType(String userId) {

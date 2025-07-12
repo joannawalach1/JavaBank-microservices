@@ -1,5 +1,6 @@
 package com.banking.accountservice;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
@@ -24,11 +25,13 @@ public class Account {
     private String accountNumber;
     private String userId;
     @Enumerated(EnumType.STRING)
-    private AccountType accountType = AccountType.SAVINGS;
+    @Schema(description = "Typ konta", example = "LOKATA")
+    private AccountType accountType;
     private BigDecimal balance;
     private String currency;
     @Enumerated(EnumType.STRING)
-    private AccountStatus status = AccountStatus.ACTIVE;
+    @Schema(description = "Status konta", example = "ACTIVE")
+    private AccountStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

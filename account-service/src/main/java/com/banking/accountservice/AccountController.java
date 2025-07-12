@@ -55,7 +55,7 @@ public class AccountController {
 
     @PutMapping("/{accountId}/balance")
     public ResponseEntity<Void> updateBalance(@PathVariable String accountId, @RequestBody AccountUpdateRequestDto request) {
-        accountService.updateBalance(accountId, request.getAmount());
+        accountService.updateBalance(accountId, request);
         return ResponseEntity.ok().build();
     }
 }
