@@ -2,6 +2,7 @@ package com.banking.accountservice;
 
 import com.banking.accountservice.dto.AccountCreateDto;
 import com.banking.accountservice.dto.AccountResponseDto;
+import com.banking.accountservice.dto.AccountUpdateRequestDto;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -57,13 +58,15 @@ public class AccountService {
 }
 
     @Transactional
-    public void updateBalance(String accountId, BigDecimal amount) {
+    public void updateBalance(String accountId, AccountUpdateRequestDto accountUpdateRequestDto) {
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
+                .orElseThrow(() -> new RuntimeException("Account not found: " + accountId));
 
-        account.setBalance(account.getBalance().add(amount));
-        account.setUpdatedAt(LocalDateTime.now());
+        BigDecimal currentBalance = account.getBalance();
+        BigDecimal newBalance = currentBalance.add(accountUpdateRequestDto.getAmount());
+        ;
 
+        account.setBalance(newBalance);
         accountRepository.save(account);
     }
 }

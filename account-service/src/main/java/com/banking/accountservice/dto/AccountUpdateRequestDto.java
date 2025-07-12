@@ -10,4 +10,6 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class AccountUpdateRequestDto {
     private BigDecimal amount;
+    private String transactionType;
+    private String AccountId;
 }
