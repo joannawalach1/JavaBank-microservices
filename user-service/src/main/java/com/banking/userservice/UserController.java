@@ -2,6 +2,9 @@ package com.banking.userservice;
 
 import com.banking.userservice.dto.AccountResponseDto;
 import com.banking.userservice.dto.*;
+import com.banking.userservice.exceptions.InvalidLoginData;
+import com.banking.userservice.exceptions.NoDataException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,13 +47,13 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserCreateDto userCreateDto) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) throws NoDataException {
         UserResponseDto user = userService.createUser(userCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody UserLoginRequest request) {
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody UserLoginRequest request) throws InvalidLoginData {
         JwtResponse token = userService.login(request);
         return ResponseEntity.ok(new JwtResponse(token.getToken()));
     }

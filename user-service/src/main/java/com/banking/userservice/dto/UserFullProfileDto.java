@@ -18,7 +18,7 @@ public class UserFullProfileDto {
     private Long id;
     private String name;
     private String email;
-    private List<Account> accounts;
+    private List<?> accounts;
     private List<Transaction> transactions;
 
 
@@ -27,9 +27,7 @@ public class UserFullProfileDto {
         this.name = user.getFirstName() + " " + user.getSurname();
         this.email = user.getEmail();
 
-        Account[] accountsArray = (accountsResponse != null) ? accountsResponse.getBody() : null;
-        this.accounts = accountsArray != null ? Arrays.asList(accountsArray) : Collections.emptyList();
-
+        this.accounts = accountsResponse != null ? accountsResponse : Collections.emptyList();
         this.transactions = allTransactions != null ? allTransactions : Collections.emptyList();
     }
 }

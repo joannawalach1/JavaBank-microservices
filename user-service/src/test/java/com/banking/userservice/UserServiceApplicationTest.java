@@ -2,6 +2,7 @@ package com.banking.userservice;
 
 import com.banking.userservice.dto.UserCreateDto;
 import com.banking.userservice.dto.UserResponseDto;
+import com.banking.userservice.exceptions.NoDataException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,7 +19,7 @@ public class UserServiceApplicationTest {
     private PasswordEncoder passwordEncoder;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoDataException {
         jwtService = mock(JwtService.class);
         passwordEncoder = mock(PasswordEncoder.class);
 

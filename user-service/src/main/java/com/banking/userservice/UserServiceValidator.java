@@ -1,0 +1,23 @@
+package com.banking.userservice;
+
+import com.banking.userservice.dto.UserCreateDto;
+import com.banking.userservice.exceptions.NoDataException;
+import com.banking.userservice.exceptions.UserWithThatEmailExists;
+
+public class UserServiceValidator {
+    private UserRepository userRepository;
+
+    public void validate(UserCreateDto userCreateDto) throws NoDataException {
+        if (userCreateDto.getUsername() == null || userCreateDto.getEmail() == null) {
+            throw new NoDataException("Username and email cannot be null");
+        }
+
+        if (userRepository.existsByUsername(userCreateDto.getUsername())) {
+            throw new UserWithThatEmailExists("Username already exists: " + userCreateDto.getUsername());
+        }
+
+        if (userRepository.existsByEmail(userCreateDto.getEmail())) {
+            throw new UserWithThatEmailExists("Email already exists: " + userCreateDto.getEmail());
+        }
+    }
+}
