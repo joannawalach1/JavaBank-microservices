@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,9 +28,9 @@ public class UserFullProfileDto {
         this.name = user.getFirstName() + " " + user.getSurname();
         this.email = user.getEmail();
 
-        Account[] accountsArray = (accountsResponse != null) ? accountsResponse.getBody() : null;
-        this.accounts = accountsArray != null ? Arrays.asList(accountsArray) : Collections.emptyList();
+        this.accounts = accountsResponse != null ? new ArrayList<>() : Collections.emptyList();
 
         this.transactions = allTransactions != null ? allTransactions : Collections.emptyList();
     }
 }
+
