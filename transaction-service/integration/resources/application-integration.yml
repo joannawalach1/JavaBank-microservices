@@ -1,0 +1,8 @@
+spring:
+  data:
+    cassandra:
+      contact-points: localhost
+      port: 9043
+      keyspace-name: transaction_keyspace
+      local-datacenter: datacenter1
+      schema-action: recreate

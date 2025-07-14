@@ -2,6 +2,7 @@ package com.banking.accountservice;
 
 import com.banking.accountservice.dto.AccountCreateDto;
 import com.banking.accountservice.dto.AccountResponseDto;
+import com.banking.accountservice.dto.AccountUpdateRequestDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,4 +53,9 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
+    @PutMapping("/{accountId}/balance")
+    public ResponseEntity<Void> updateBalance(@PathVariable String accountId, @RequestBody AccountUpdateRequestDto request) {
+        accountService.updateBalance(accountId, request);
+        return ResponseEntity.ok().build();
+    }
 }

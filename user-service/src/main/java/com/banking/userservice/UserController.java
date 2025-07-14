@@ -1,7 +1,10 @@
 package com.banking.userservice;
 
-import com.banking.accountservice.dto.AccountResponseDto;
+import com.banking.userservice.dto.AccountResponseDto;
 import com.banking.userservice.dto.*;
+import com.banking.userservice.exceptions.InvalidLoginData;
+import com.banking.userservice.exceptions.NoDataException;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,22 +13,31 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+
 public class UserController {
 
     private final UserService userService;
     private final AccountClient accountClient;
-    private final FullProfileClient fullProfileClient;
+    private final TransactionClient fullProfileClient;
+    private final JwtService jwtService;
 
-    public UserController(UserService userService, AccountClient accountClient, FullProfileClient fullProfileClient) {
+    public UserController(UserService userService, AccountClient accountClient, TransactionClient fullProfileClient, JwtService jwtService) {
         this.userService = userService;
         this.accountClient = accountClient;
         this.fullProfileClient = fullProfileClient;
+        this.jwtService = jwtService;
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/username//{username}")
     public ResponseEntity<UserResponseDto> findUserByUsername(@PathVariable String username) {
         UserResponseDto userByUsername = userService.findUserByUsername(username);
         return ResponseEntity.status(HttpStatus.OK).body(userByUsername);
+    }
+
+    @GetMapping("/id/{id}")
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
+        UserResponseDto user = userService.findUserById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     @GetMapping
@@ -35,18 +47,15 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> createUser(@RequestBody UserCreateDto userCreateDto) {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) throws NoDataException {
         UserResponseDto user = userService.createUser(userCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponse> login(@RequestBody UserLoginRequest request) {
-        String token = userService.login(request);
-        UserResponseDto userDto = userService.findUserByUsername(request.getUsername());
-
-        UserLoginResponse response = new UserLoginResponse(token, userDto);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody UserLoginRequest request) throws InvalidLoginData {
+        JwtResponse token = userService.login(request);
+        return ResponseEntity.ok(new JwtResponse(token.getToken()));
     }
 
     @PostMapping("/updatedUser")
@@ -68,9 +77,12 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/{username}/profile")
-    public ResponseEntity<UserFullProfileDto> getUserFullProfile(@PathVariable String username) {
-        UserFullProfileDto fullProfile = fullProfileClient.getUserFullProfile(username);
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserFullProfileDto> getUserFullProfile(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = authorizationHeader.replace("Bearer ", "");
+        String username = jwtService.extractUsername(token);
+        UserFullProfileDto fullProfile = userService.getUserFullProfile(username);
         return ResponseEntity.ok(fullProfile);
     }
 }

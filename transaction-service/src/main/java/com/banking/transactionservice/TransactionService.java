@@ -1,5 +1,6 @@
 package com.banking.transactionservice;
 
+import com.banking.transactionservice.dto.AccountUpdateRequestDto;
 import com.banking.transactionservice.dto.TransactionCreateRequest;
 import com.banking.transactionservice.dto.TransactionResponseDto;
 import org.springframework.stereotype.Service;
@@ -13,12 +14,14 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final AccountClient accountClient;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(TransactionRepository transactionRepository, AccountClient accountClient) {
         this.transactionRepository = transactionRepository;
+        this.accountClient = accountClient;
     }
 
-    public TransactionResponseDto getTransactionsById(Long transactionId) {
+    public TransactionResponseDto getTransactionsById(UUID transactionId) {
         Transaction byId = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new TransactionNotFoundException("Transaction not found with id: " + transactionId));
         return TransactionMapper.toTransactionResponseDto(byId);
@@ -27,7 +30,7 @@ public class TransactionService {
     public Transaction createTransaction(TransactionCreateRequest transactionCreateRequest) {
         BigDecimal amount = transactionCreateRequest.getAmount();
         Long accountFrom = transactionCreateRequest.getAccountFrom();
-        Long accountTo = transactionCreateRequest.getAccountId();
+        String accountTo = transactionCreateRequest.getAccountId();
         Long userId = transactionCreateRequest.getUserId();
         String currency = transactionCreateRequest.getCurrency();
         String transactionType = transactionCreateRequest.getTransactionType();
@@ -39,7 +42,7 @@ public class TransactionService {
         if (accountFrom == null || accountTo == null || accountFrom.equals(accountTo)) {
             throw new IllegalArgumentException("Source and destination accounts cannot be the same or null");
         }
-        String id = UUID.randomUUID().toString();
+        UUID id = UUID.randomUUID();
         Transaction transactionEntity = TransactionMapper.toTransactionEntity(
                 new TransactionResponseDto(
                         id,
@@ -54,11 +57,19 @@ public class TransactionService {
                 )
         );
 
-        return transactionRepository.save(transactionEntity);
+        Transaction savedTransaction = transactionRepository.save(transactionEntity);
+        AccountUpdateRequestDto request = new AccountUpdateRequestDto(
+                transactionCreateRequest.getAmount(),
+                transactionCreateRequest.getTransactionType(),
+                transactionCreateRequest.getAccountId()
+        );
+
+        accountClient.updateBalance(transactionCreateRequest.getAccountId(), request);
+        return savedTransaction;
     }
 
-    public List<TransactionResponseDto> getTransactionsByType(String userId, String type) {
-        return transactionRepository.findByUserIdAndTransactionType(userId, type).stream()
+    public List<TransactionResponseDto> getTransactionsByType(String userId) {
+        return transactionRepository.findByUserIdAndTransactionType(userId).stream()
                 .map(TransactionMapper::toTransactionResponseDto)
                 .collect(Collectors.toList());
     }
@@ -70,6 +81,12 @@ public class TransactionService {
 
     public List<TransactionResponseDto> getTransactionsByUserId(Long id) {
         return null;
+    }
+
+    public List<TransactionResponseDto> getAllTransactions() {
+        return transactionRepository.findAll().stream()
+                .map(TransactionMapper::toTransactionResponseDto)
+                .collect(Collectors.toList());
     }
 }
 
