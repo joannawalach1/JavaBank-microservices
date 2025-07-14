@@ -95,7 +95,7 @@
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
-            <version>1.5.5.Final</version> <!-- lub nowsza -->
+            <version>1.5.5.Final</version>
         </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -131,7 +131,7 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
-            <version>1.19.0</version> <!-- lub nowsza dostępna wersja -->
+            <version>1.19.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

@@ -1,7 +1,6 @@
 package com.banking.transactionservice.configuration;
 
 import com.datastax.oss.driver.api.core.CqlSession;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,10 +45,8 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
         return new CassandraAdminTemplate(session);
     }
 
-    // Inicjalizacja keyspace i tabeli po utworzeniu sesji
 
     public void init() {
-        // Tworzymy tymczasową sesję bez keyspace, aby utworzyć keyspace, jeśli nie istnieje
         try (CqlSession initSession = CqlSession.builder()
                 .addContactPoint(new InetSocketAddress(contactPoints, port))
                 .withLocalDatacenter(datacenter1)
@@ -61,7 +58,6 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
             initSession.execute(createKeyspaceCql);
         }
 
-        // Teraz używamy głównej sesji z keyspace, by utworzyć tabelę
         session().execute(
                 "CREATE TABLE IF NOT EXISTS transactions (" +
                         "id UUID PRIMARY KEY, " +

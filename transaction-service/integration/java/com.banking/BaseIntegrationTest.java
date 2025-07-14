@@ -49,5 +49,6 @@ public class BaseIntegrationTest {
         registry.add("spring.data.cassandra.local-datacenter", () -> "datacenter1");
         registry.add("spring.data.cassandra.schema-action", () -> "create-if-not-exists");
     }
+
 }
 

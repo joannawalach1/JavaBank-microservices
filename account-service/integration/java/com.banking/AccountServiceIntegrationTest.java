@@ -1,6 +1,8 @@
 package com.banking;
 
 import com.banking.accountservice.AccountServiceApplication;
+import com.banking.accountservice.AccountStatus;
+import com.banking.accountservice.AccountType;
 import com.banking.accountservice.dto.AccountCreateDto;
 import com.banking.accountservice.dto.AccountResponseDto;
 import org.junit.jupiter.api.Test;
@@ -19,7 +21,7 @@ public class AccountServiceIntegrationTest extends BaseIntegrationTest {
     @Test
     public void should_create_new_account() {
         // 1. Tworzenie nowego konta
-        AccountCreateDto accountCreateDto = new AccountCreateDto(null, "1234567890123456", "user123", "SAVINGS", new BigDecimal("1000.00"), "USD", "Active");
+        AccountCreateDto accountCreateDto = new AccountCreateDto(null, "1234567890123456", "user123", AccountType.SAVINGS, new BigDecimal("1000.00"), "USD", AccountStatus.ACTIVE);
         ResponseEntity<AccountResponseDto> registerResponse = restTemplate.postForEntity(
                 "/api/accounts",
                 accountCreateDto,

@@ -3,9 +3,17 @@ package com.banking.userservice;
 import com.banking.userservice.dto.UserCreateDto;
 import com.banking.userservice.exceptions.NoDataException;
 import com.banking.userservice.exceptions.UserWithThatEmailExists;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserServiceValidator {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserServiceValidator(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     public void validate(UserCreateDto userCreateDto) throws NoDataException {
         if (userCreateDto.getUsername() == null || userCreateDto.getEmail() == null) {

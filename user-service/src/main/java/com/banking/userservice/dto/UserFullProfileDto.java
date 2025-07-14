@@ -1,13 +1,11 @@
 package com.banking.userservice.dto;
 
-import com.banking.accountservice.Account;
 import com.banking.transactionservice.Transaction;
 import com.banking.userservice.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
