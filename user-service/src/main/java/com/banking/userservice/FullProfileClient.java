@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class FullProfileClient {
@@ -24,7 +25,7 @@ public class FullProfileClient {
 
     public UserFullProfileDto getUserFullProfile(String username) {
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User with username '" + username + "' was not found"));
+                .orElseThrow(() -> new NoSuchElementException("User with username '" + username + "' was not found"));
 
         List<AccountResponseDto> accounts = accountClient.getAccountsForUser(user.getId());
 
