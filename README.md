@@ -1,53 +1,76 @@
-# JavaBank - Microservices Banking System
+# 💳 JavaBank – Microservices Banking System
 
-A modern banking system built with Spring Boot microservices architecture, featuring user management, account services, and transaction processing.
+A modular banking system built using **Spring Boot** and **Spring Cloud**, implementing a microservices architecture with service discovery, RESTful APIs, and distributed components.
 
----
-
-## 🏗️ Architecture
-
-This project follows a microservices architecture and includes the following components:
-
-- **Eureka Server** – Service discovery and registry  
-- **User Service** – User management and authentication  
-- **Account Service** – Account management and operations  
-- **Transaction Service** – Transaction processing (in development)
+> This project is in active development and demonstrates how to structure a scalable microservices-based backend in Java.
 
 ---
 
-## 📋 Prerequisites
+## 📦 Project Structure
 
-Before running the application, ensure you have:
+This repository consists of the following microservices and components:
 
-- Java 17 or higher  
-- Maven 3.6+  
-- Docker & Docker Compose  
-- PostgreSQL (for User Service)  
-- MongoDB (for Account Service)  
-- Redis (for Account Service caching)
+| Module                      | Description                                                        |
+|-----------------------------|--------------------------------------------------------------------|
+| [`eureka-server`](./eureka-server)            | Eureka Service Discovery server                                 |
+| [`user-service`](./user-service)              | Handles user registration, login (JWT), and profile management |
+| [`account-service`](./account-service)        | Manages user bank accounts (CRUD operations, MongoDB, Redis)   |
+| [`transaction-service`](./transaction-service)| (WIP) Processes account transactions and communication          |
+
+---
+
+## 🧰 Tech Stack
+
+### ✅ Backend
+
+- **Spring Boot 3.2.0**
+- **Spring Cloud 2023.0.0**
+- **Spring Security** + **JWT**
+- **Spring Data JPA** (PostgreSQL)
+- **Spring Data MongoDB** (Account storage)
+- **Redis** (Caching)
+- **Eureka Discovery** (Netflix)
+- **OpenFeign** (Inter-service communication)
+- **Resilience4j** (Circuit breakers, retry)
+- **MapStruct**, **Lombok**, **ModelMapper**
+
+### ☁️ Infrastructure
+
+- **PostgreSQL** (User data)
+- **MongoDB** (Account data)
+- **Redis** (Caching)
+- **Docker Compose** (for MongoDB & Redis)
+
+---
+
+## 🧪 Prerequisites
+
+Ensure you have the following installed locally:
+
+- Java 17+
+- Maven 3.6+
+- Docker & Docker Compose
+- PostgreSQL running locally or in a container
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Start Infrastructure Services
-
-Run the infrastructure containers (MongoDB, Redis):
+### 1. Start MongoDB and Redis (for Account Service)
 
 ```bash
 cd account-service
 docker-compose up -d
-This launches:
+This will start:
 
-MongoDB on port 27017
+MongoDB: localhost:27017
 
-Redis on port 6379
+Redis: localhost:6379
 
-RabbitMQ is not currently required.
+2. Create PostgreSQL Database for User Service
+Create the database manually or use Docker:
 
-2. Set Up PostgreSQL (User Service)
-Create a PostgreSQL database:
-
+Manual Setup:
 Database: userDB
 
 Username: postgres
@@ -56,134 +79,123 @@ Password: 666666
 
 Port: 5432
 
-3. Run Microservices
-Start each service in this order:
-
+Docker Setup:
 bash
 Kopiuj
 Edytuj
-# Eureka Server
+docker run --name postgres \
+  -e POSTGRES_DB=userDB \
+  -e POSTGRES_USER=postgres \
+  -e POSTGRES_PASSWORD=666666 \
+  -p 5432:5432 -d postgres
+3. Run the Microservices
+Recommended startup order:
+
+🧭 Start Eureka Server
+bash
+Kopiuj
+Edytuj
 cd eureka-server
 mvn spring-boot:run
-Eureka Dashboard
+URL: http://localhost:8761
 
+👤 Start User Service
 bash
 Kopiuj
 Edytuj
-# User Service (Port 8082)
 cd ../user-service
 mvn spring-boot:run
+Runs on: http://localhost:8082
+
+💼 Start Account Service
 bash
 Kopiuj
 Edytuj
-# Account Service (Port 8081)
 cd ../account-service
 mvn spring-boot:run
+Runs on: http://localhost:8081
+
+💸 (Optional) Start Transaction Service
 bash
 Kopiuj
 Edytuj
-# Transaction Service (Port 8083 - optional/in development)
 cd ../transaction-service
 mvn spring-boot:run
+Runs on: http://localhost:8083
+
 📡 API Endpoints
-🔐 User Service
+🔐 User Service (Port 8082)
 Authentication
 
-POST /api/users/register – Register new user
+POST /api/users/register – Register a new user
 
-POST /api/users/login – Authenticate (returns JWT)
+POST /api/users/login – Authenticate a user (returns JWT)
 
 User Management
 
-GET /api/users – Get all users
+GET /api/users – Retrieve all users
 
-GET /api/users/{username} – Get user by username
+GET /api/users/{username} – Get user details by username
 
-POST /api/users/updatedUser – Update user
+POST /api/users/updatedUser – Update user profile
 
-GET /api/users/{username}/accounts – Get user with accounts
+GET /api/users/{username}/accounts – Retrieve user's associated accounts
 
-🧾 Account Service
+🏦 Account Service (Port 8081)
 GET /api/accounts – Get all accounts
 
 GET /api/accounts/{userId} – Get accounts by user ID
 
-GET /api/accounts/number/{accountNumber} – Get by account number
+GET /api/accounts/number/{accountNumber} – Get account by account number
 
-POST /api/accounts – Create new account
+GET /api/accounts/user/{userId} – (Alt) Get accounts by user ID
 
-GET /api/accounts/user/{userId} – Alternative user ID endpoint
+POST /api/accounts – Create a new account
 
-🛠️ Technology Stack
-Backend
-Spring Boot 3.2.0
+📖 Swagger Documentation
+Access live API documentation:
 
-Spring Cloud 2023.0.0
+User Service: http://localhost:8082/swagger-ui.html
 
-Spring Security + JWT
+Account Service: http://localhost:8081/swagger-ui.html
 
-Netflix Eureka
+🔐 Security
+JWT-based authentication
 
-Spring Data JPA (PostgreSQL)
+Secure password hashing (BCrypt)
 
-Spring Data MongoDB
+Role-based access control (user/admin)
 
-OpenFeign (service-to-service)
+Service-to-service security via Eureka and Feign
 
-Lombok, MapStruct
-
-Databases
-PostgreSQL – Users
-
-MongoDB – Accounts
-
-Redis – Cache
-
-API Docs
-SpringDoc OpenAPI + Swagger UI
-
-🔧 Configuration
-Key Config Files
-eureka-server/src/main/resources/application.yml
-
-user-service/src/main/resources/application.yml
-
-account-service/src/main/resources/application.yml
-
-account-service/docker-compose.yml – for MongoDB & Redis
-
-JWT Secret
-Ensure user-service has:
+⚙️ Configuration
+🔑 JWT
+Located in user-service/src/main/resources/application.yml:
 
 yaml
 Kopiuj
 Edytuj
 jwt:
   secret: moja-super-tajna-wartosc
-📖 Swagger UI
-User Service – Swagger
-
-Account Service – Swagger
+🔧 Other Key Config Files
+Path	Description
+eureka-server/src/main/resources/application.yml	Eureka config
+user-service/src/main/resources/application.yml	DB, JWT, port, discovery
+account-service/src/main/resources/application.yml	MongoDB, Redis config
+account-service/docker-compose.yml	MongoDB and Redis containers
 
 🐳 Docker Support
-Start required services for Account Service:
+To start supporting services via Docker:
 
 bash
 Kopiuj
 Edytuj
 cd account-service
 docker-compose up -d
-🔐 Security Features
-JWT token-based auth
-
-BCrypt password hashing
-
-Secure service-to-service communication via Eureka
-
-Input validation
+You can also run PostgreSQL using the Docker command shown earlier.
 
 🚧 Development Status
-Component	Status
+Service	Status
 User Service	✅ Complete
 Account Service	✅ Complete
 Eureka Server	✅ Complete
