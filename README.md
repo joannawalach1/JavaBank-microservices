@@ -1,39 +1,40 @@
-JavaBank - Microservices Banking System
+# JavaBank - Microservices Banking System
+
 A modern banking system built with Spring Boot microservices architecture, featuring user management, account services, and transaction processing.
 
-🏗️ Architecture
+---
+
+## 🏗️ Architecture
+
 This project implements a microservices architecture with the following components:
 
-Eureka Server — Service discovery and registry
+- **Eureka Server** — Service discovery and registry  
+- **User Service** — User management and authentication  
+- **Account Service** — Account management and operations  
+- **Transaction Service** — Transaction processing (in development)  
 
-User Service — User management and authentication
+---
 
-Account Service — Account management and operations
+## 📋 Prerequisites
 
-Transaction Service — Transaction processing (in development)
-
-📋 Prerequisites
 Before running the application, ensure you have the following installed and configured:
 
-Java 17 or higher
+- Java 17 or higher  
+- Maven 3.6+  
+- Docker and Docker Compose (for infrastructure components)  
+- PostgreSQL (for User Service database)  
+- MongoDB (for Account Service database)  
+- Redis (for caching in Account Service)  
 
-Maven 3.6+
+---
 
-Docker and Docker Compose (for infrastructure components)
+## 🚀 Quick Start
 
-PostgreSQL (for User Service database)
+### Start Infrastructure Services
 
-MongoDB (for Account Service database)
+Navigate to the `account-service` directory and start infrastructure containers:
 
-Redis (for caching in Account Service)
-
-🚀 Quick Start
-Start Infrastructure Services
-Navigate to the account-service directory and start infrastructure containers:
-
-bash
-Kopiuj
-Edytuj
+```bash
 cd account-service
 docker-compose up -d
 This will launch:
@@ -202,16 +203,7 @@ Input validation and exception handling on all endpoints
 
 🚧 Transaction Service — Under active development
 
-🤝 Contributing
-Fork the repository
 
-Create your feature branch (git checkout -b feature/YourFeature)
-
-Commit your changes (git commit -m 'Add feature')
-
-Push to your branch (git push origin feature/YourFeature)
-
-Open a Pull Request
 
 
 
