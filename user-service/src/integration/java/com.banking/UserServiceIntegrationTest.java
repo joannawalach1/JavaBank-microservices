@@ -19,6 +19,8 @@ public class UserServiceIntegrationTest extends BaseIntegrationTest {
 
     @Autowired
     private UserRepository userRepository;
+
+
     @Test
     public void shouldRegisterAndLoginUser() {
         // 1. Rejestracja użytkownika

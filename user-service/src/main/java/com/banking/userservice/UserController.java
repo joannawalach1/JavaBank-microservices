@@ -72,7 +72,7 @@ public class UserController {
         }
 
         List<AccountResponseDto> accounts = accountClient.getAccountsForUser(user.getId());
-        UserWithAccountsDto response = new UserWithAccountsDto(user, accounts);
+        UserWithAccountsDto response = new UserWithAccountsDto(user.getUsername(),user.getEmail(), accounts);
 
         return ResponseEntity.ok(response);
     }

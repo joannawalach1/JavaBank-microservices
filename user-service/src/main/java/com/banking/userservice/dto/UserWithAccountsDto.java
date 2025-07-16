@@ -13,10 +13,4 @@ public class UserWithAccountsDto {
         private String email;
         private List<AccountResponseDto> accounts;
 
-    public UserWithAccountsDto(UserResponseDto user, List<AccountResponseDto> accounts) {
-        this.username = user.getUsername();
-        this.email = user.getEmail();
-        this.accounts = accounts;
-    }
-
 }
