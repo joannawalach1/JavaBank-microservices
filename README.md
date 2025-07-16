@@ -1,237 +1,217 @@
-# JavaBank - Microservices Banking System
-
+JavaBank - Microservices Banking System
 A modern banking system built with Spring Boot microservices architecture, featuring user management, account services, and transaction processing.
 
----
-
-## 🏗️ Architecture
-
+🏗️ Architecture
 This project implements a microservices architecture with the following components:
 
-- **Eureka Server** - Service discovery and registry  
-- **User Service** - User management and authentication  
-- **Account Service** - Account management and operations  
-- **Transaction Service** - Transaction processing (in development)  
+Eureka Server — Service discovery and registry
 
----
+User Service — User management and authentication
 
-## 📋 Prerequisites
+Account Service — Account management and operations
 
-Before running the application, ensure you have the following installed:
+Transaction Service — Transaction processing (in development)
 
-- Java 17 or higher  
-- Maven 3.6+  
-- Docker and Docker Compose  
-- PostgreSQL (for user service)  
-- MongoDB (for account service)  
-- Redis (for caching)  
-- RabbitMQ (for messaging)  
+📋 Prerequisites
+Before running the application, ensure you have the following installed and configured:
 
----
+Java 17 or higher
 
-## 🚀 Quick Start
+Maven 3.6+
 
-### Start Infrastructure Services
+Docker and Docker Compose (for infrastructure components)
 
-Navigate to the `account-service` directory and start the required infrastructure:
+PostgreSQL (for User Service database)
 
-```bash
+MongoDB (for Account Service database)
+
+Redis (for caching in Account Service)
+
+🚀 Quick Start
+Start Infrastructure Services
+Navigate to the account-service directory and start infrastructure containers:
+
+bash
+Kopiuj
+Edytuj
 cd account-service
 docker-compose up -d
-```
+This will launch:
 
-This will start:  
-- MongoDB on port 27017  
-- Redis on port 6379  
-- RabbitMQ on ports 5672 (AMQP) and 15672 (Management UI)  
+MongoDB on port 27017
 
-### Set up PostgreSQL Database
+Redis on port 6379
 
-Create a PostgreSQL database named `userDB` with the following credentials:
+Set Up PostgreSQL Database
+Create a PostgreSQL database named userDB with credentials:
 
-- **Username:** `postgres`  
-- **Password:** `666666`  
-- **Port:** `5432`  
+Username: postgres
 
-### Start Services
+Password: 666666
 
-Start the services in the following order:
+Port: 5432
 
-```bash
+Start Services
+Run the microservices in this order:
+
+bash
+Kopiuj
+Edytuj
 # Start Eureka Server
 cd eureka-server
 mvn spring-boot:run
-```
+Eureka dashboard available at: http://localhost:8761
 
-Eureka Dashboard will be available at: [http://localhost:8761](http://localhost:8761)
-
-```bash
+bash
+Kopiuj
+Edytuj
 # Start User Service
 cd user-service
 mvn spring-boot:run
-```
+User Service runs on port 8082
 
-User Service will run on port 8082
-
-```bash
+bash
+Kopiuj
+Edytuj
 # Start Account Service
 cd account-service
 mvn spring-boot:run
-```
+Account Service runs on port 8081
 
-Account Service will run on port 8081
-
-```bash
-# Start Transaction Service
+bash
+Kopiuj
+Edytuj
+# Start Transaction Service (in development)
 cd transaction-service
 mvn spring-boot:run
-```
+Transaction Service runs on port 8083
 
-Transaction Service will run on port 8083
+📡 API Endpoints
+User Service (Port 8082)
+Authentication
 
----
+POST /api/users/register — Register new user
 
-## 📡 API Endpoints
+POST /api/users/login — User login (returns JWT token)
 
-### User Service (Port 8082)
+User Management
 
-**Authentication**
+GET /api/users — Get all users
 
-- `POST /api/users/register` - Register new user  
-- `POST /api/users/login` - User login (returns JWT token)  
+GET /api/users/{username} — Get user by username
 
-**User Management**
+POST /api/users/updatedUser — Update user information
 
-- `GET /api/users` - Get all users  
-- `GET /api/users/{username}` - Get user by username  
-- `POST /api/users/updatedUser` - Update user information  
-- `GET /api/users/{username}/accounts` - Get user with associated accounts  
+GET /api/users/{username}/accounts — Get user with associated accounts
 
-### Account Service (Port 8081)
+Account Service (Port 8081)
+GET /api/accounts — Get all accounts
 
-- `GET /api/accounts` - Get all accounts  
-- `GET /api/accounts/{userId}` - Get accounts by user ID  
-- `GET /api/accounts/number/{accountNumber}` - Get account by account number  
-- `POST /api/accounts` - Create new account  
-- `GET /api/accounts/user/{userId}` - Get accounts by user ID (alternative endpoint)  
+GET /api/accounts/{userId} — Get accounts by user ID
 
----
+GET /api/accounts/number/{accountNumber} — Get account by account number
 
-## 🛠️ Technology Stack
+POST /api/accounts — Create new account
 
-### Backend
+GET /api/accounts/user/{userId} — Get accounts by user ID (alternative endpoint)
 
-- Spring Boot 3.2.0 - Main framework  
-- Spring Cloud 2023.0.0 - Microservices infrastructure  
-- Spring Security - Authentication and authorization  
-- JWT - Token-based authentication  
-- Netflix Eureka - Service discovery  
-- OpenFeign - Service-to-service communication  
-- Spring Data JPA - Database abstraction for PostgreSQL  
-- Spring Data MongoDB - MongoDB integration  
-- Spring Boot AMQP - RabbitMQ integration  
-- MapStruct - Object mapping  
-- Lombok - Boilerplate code reduction  
+🛠️ Technology Stack
+Backend
+Spring Boot 3.2.0 — Core framework
 
-### Databases
+Spring Cloud 2023.0.0 — Microservices infrastructure
 
-- PostgreSQL - User data storage  
-- MongoDB - Account data storage  
-- Redis - Caching layer  
+Spring Security — Authentication and authorization
 
-### Message Broker
+JWT — Token-based authentication
 
-- RabbitMQ - Asynchronous messaging  
+Netflix Eureka — Service discovery and registry
 
-### Documentation
+OpenFeign — Inter-service communication
 
-- SpringDoc OpenAPI - API documentation  
-- Swagger UI - Interactive API documentation  
+Spring Data JPA — PostgreSQL database integration
 
----
+Spring Data MongoDB — MongoDB integration
 
-## 🔧 Configuration
+MapStruct — Object mapping between DTOs and entities
 
-### Key Configuration Files
+Lombok — Boilerplate reduction
 
-- `eureka-server/src/main/resources/application.yml` - Eureka server configuration  
-- `user-service/src/main/resources/application.yml` - User service configuration  
-- `account-service/src/main/resources/application.yml` - Account service configuration  
-- `account-service/docker-compose.yml` - Infrastructure services  
+Databases
+PostgreSQL — User data persistence
 
-### Environment Variables
+MongoDB — Account data persistence
 
-Make sure to configure the following in your environment:
+Redis — Cache layer to improve performance
 
-```yaml
-# JWT Secret (configured in user-service application.yml)
+Documentation
+SpringDoc OpenAPI — API documentation generation
+
+Swagger UI — Interactive API documentation interface
+
+🔧 Configuration
+Important Configuration Files
+eureka-server/src/main/resources/application.yml — Eureka server settings
+
+user-service/src/main/resources/application.yml — User Service config (DB, JWT, security)
+
+account-service/src/main/resources/application.yml — Account Service config (MongoDB, Redis)
+
+account-service/docker-compose.yml — Infrastructure services definitions (MongoDB, Redis)
+
+Environment Variables
+Make sure to configure the following environment variables (or in application.yml):
+
+yaml
+Kopiuj
+Edytuj
 jwt:
   secret: moja-super-tajna-wartosc
-```
+Database connections and other settings are preconfigured in the respective application.yml files.
 
-Database configurations are already set in `application.yml` files.
+📖 API Documentation
+Once the services are running, access API docs here:
 
----
+User Service: http://localhost:8082/swagger-ui.html
 
-## 📖 API Documentation
+Account Service: http://localhost:8081/swagger-ui.html
 
-Once the services are running, you can access the API documentation:  
+🐳 Docker Support
+To start required infrastructure services (MongoDB, Redis) for Account Service:
 
-- User Service: [http://localhost:8082/swagger-ui.html](http://localhost:8082/swagger-ui.html)  
-- Account Service: [http://localhost:8081/swagger-ui.html](http://localhost:8081/swagger-ui.html)  
-
----
-
-## 🐳 Docker Support
-
-The project includes Docker Compose configuration for infrastructure services. To start all required services:
-
-```bash
+bash
+Kopiuj
+Edytuj
 cd account-service
 docker-compose up -d
-```
+🔐 Security
+JWT-based authentication for all secured endpoints
 
----
+Passwords encrypted using BCrypt
 
-## 🔐 Security
+Service-to-service communication secured via Eureka discovery
 
-- JWT-based authentication for secure API access  
-- Password encryption using BCrypt  
-- Service-to-service communication through Eureka  
-- Input validation on all endpoints  
+Input validation and exception handling on all endpoints
 
----
+🚧 Development Status
+✅ User Service — Complete
 
-## 🚧 Development Status
+✅ Account Service — Complete
 
-- ✅ User Service - Complete  
-- ✅ Account Service - Complete  
-- ✅ Eureka Server - Complete  
-- 🚧 Transaction Service - In Development  
+✅ Eureka Server — Complete
 
----
+🚧 Transaction Service — Under active development
 
-## 🤝 Contributing
+🤝 Contributing
+Fork the repository
 
-- Fork the repository  
-- Create your feature branch (`git checkout -b feature/AmazingFeature`)  
-- Commit your changes (`git commit -m 'Add some AmazingFeature'`)  
-- Push to the branch (`git push origin feature/AmazingFeature`)  
-- Open a Pull Request  
+Create your feature branch (git checkout -b feature/YourFeature)
 
----
+Commit your changes (git commit -m 'Add feature')
 
-## 📝 License
+Push to your branch (git push origin feature/YourFeature)
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+Open a Pull Request
 
----
 
-## 📞 Support
-
-For support and questions, please open an issue in the GitHub repository.
-
----
-
-**Note:** This is a educational/demonstration project showcasing microservices architecture with Spring Boot and Spring Cloud.
 
