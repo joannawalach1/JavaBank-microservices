@@ -1,228 +1,133 @@
-# JavaBank-microservices
+JavaBank Microservices
 
-JavaBank-microservices to przykładowa aplikacja bankowa zbudowana w architekturze mikroserwisów, wykorzystująca nowoczesne technologie JVM i ekosystem Spring. Projekt demonstruje, jak stworzyć skalowalny, modularny i łatwy w utrzymaniu system bankowy rozłożony na kilka niezależnych mikroserwisów komunikujących się asynchronicznie i synchronicznie.
+Nowoczesny system bankowy oparty na architekturze mikrousług, zbudowany z wykorzystaniem Spring Boot
 
----
+JavaBank to zaawansowany system bankowy implementujący architekturę mikrousług, zapewniający bezpieczne zarządzanie użytkownikami, kontami oraz transakcjami. Projekt wykorzystuje najnowsze technologie Java i Spring Boot do stworzenia skalowalnego, niezawodnego rozwiązania bankowego.
+🏗️ Architektura Systemu
+Projekt składa się z następujących mikrousług:
 
-## Spis treści
+Eureka Server - Serwer odkrywania i rejestracji usług
+User Service - Zarządzanie użytkownikami i autoryzacja
+Account Service - Zarządzanie kontami i operacje
+Transaction Service - Przetwarzanie transakcji (w trakcie rozwoju)
 
-- [Opis projektu](#opis-projektu)  
-- [Architektura](#architektura)  
-- [Funkcjonalności](#funkcjonalności)  
-- [Technologie](#technologie)  
-- [Struktura projektu](#struktura-projektu)  
-- [Instrukcja uruchomienia](#instrukcja-uruchomienia)  
-- [Przykłady użycia](#przykłady-użycia)  
-- [Monitorowanie i logowanie](#monitorowanie-i-logowanie)  
-- [Rozwój projektu](#rozwój-projektu)  
-- [Autor](#autor)  
-- [Licencja](#licencja)  
+🚀 Kluczowe Funkcjonalności
+Zarządzanie Użytkownikami
 
----
+Rejestracja i logowanie użytkowników
+Bezpieczna autoryzacja z użyciem JWT tokenów
+Szyfrowanie haseł za pomocą BCrypt
+CRUD operacje na danych użytkowników
 
-## Opis projektu
+System Kont
 
-JavaBank-microservices to kompletny system bankowy podzielony na niezależne mikroserwisy, które realizują wybrane domeny biznesowe, takie jak zarządzanie użytkownikami, kontami bankowymi, transakcjami i powiadomieniami. Projekt demonstruje:
+Tworzenie i zarządzanie kontami bankowymi
+Integracja z danymi użytkowników
+Cache'owanie z wykorzystaniem Redis dla lepszej wydajności
+Elastyczne wyszukiwanie kont (po ID użytkownika, numerze konta)
 
-- Zastosowanie Spring Boot i Spring Cloud do budowy mikroserwisów  
-- Rejestrację i odnajdywanie usług przez Eureka Server  
-- Bezpieczną autoryzację i uwierzytelnianie za pomocą JWT  
-- Komunikację synchroniczną (REST) i asynchroniczną (RabbitMQ)  
-- Integrację z bazami danych (MongoDB, Cassandra) oraz Elasticsearch  
-- Monitoring za pomocą Prometheus i Grafana  
-- Skalowalność i elastyczność wdrożeń dzięki Dockerowi i Docker Compose  
+Bezpieczeństwo
 
----
+Autoryzacja oparta na JWT tokenach
+Zabezpieczona komunikacja między serwisami
+Walidacja danych wejściowych
+Obsługa wyjątków na wszystkich endpointach
 
-## Architektura
+🛠️ Stack Technologiczny
+Backend Framework
 
-+----------------+ +---------------+ +------------------+
-| Frontend UI | ---> | API Gateway | <---> | Eureka Server |
-+----------------+ +---------------+ +------------------+
-| | |
--------------------------------------------------
-| | | |
-+-----------+ +------------+ +--------------+ +---------------+
-| user-service | account-service | transaction-service | notification-service |
-+-----------+ +------------+ +--------------+ +---------------+
-| | | |
-MongoDB / Cassandra MongoDB MongoDB RabbitMQ (MQ)
+Spring Boot 3.2.0 - Główny framework aplikacyjny
+Spring Cloud 2023.0.0 - Infrastruktura mikrousług
+Spring Security - Autoryzacja i uwierzytelnianie
+Netflix Eureka - Service discovery
+OpenFeign - Komunikacja między serwisami
 
-yaml
-Kopiuj
-Edytuj
+Bazy Danych
 
-- **API Gateway**: Punkt wejścia do systemu, odpowiedzialny za routing, uwierzytelnianie i agregację usług  
-- **Eureka Server**: Rejestracja i odnajdywanie mikroserwisów  
-- **User Service**: Zarządzanie użytkownikami, profilem i rolami  
-- **Account Service**: Obsługa kont bankowych, sald i limitów  
-- **Transaction Service**: Przetwarzanie i historia transakcji  
-- **Notification Service**: Wysyłanie powiadomień o zdarzeniach (np. potwierdzenia transakcji)  
-- **RabbitMQ**: Komunikacja asynchroniczna (event-driven architecture)  
+PostgreSQL - Przechowywanie danych użytkowników
+MongoDB - Przechowywanie danych kont
+Redis - Warstwa cache dla lepszej wydajności
 
----
+Narzędzia Pomocnicze
 
-## Funkcjonalności
+MapStruct - Mapowanie obiektów między DTO a encjami
+Lombok - Redukcja boilerplate code
+SpringDoc OpenAPI - Generowanie dokumentacji API
+Docker Compose - Konteneryzacja usług infrastrukturalnych
 
-- Rejestracja, logowanie i zarządzanie użytkownikami z JWT  
-- CRUD kont bankowych i kontrola statusu konta  
-- Wykonywanie i rejestrowanie transakcji między kontami  
-- Asynchroniczne powiadomienia i obsługa zdarzeń  
-- Pełna obsługa błędów i walidacji danych  
-- Monitoring metryk i logów w czasie rzeczywistym  
+📋 Wymagania Systemowe
 
----
+Java 17+
+Maven 3.6+
+Docker i Docker Compose
+PostgreSQL
+MongoDB (uruchamiana przez Docker)
+Redis (uruchamiany przez Docker)
 
-## Technologie
+🔧 Instalacja i Uruchomienie
+1. Uruchomienie Infrastruktury
+bashcd account-service
+docker-compose up -d
+2. Konfiguracja Bazy PostgreSQL
+Utwórz bazę danych:
 
-| Kategoria           | Technologie                        |
-|---------------------|----------------------------------|
-| Język programowania  | Java 11+                         |
-| Framework           | Spring Boot, Spring Cloud         |
-| Bazy danych         | MongoDB, Cassandra                |
-| Messaging           | RabbitMQ                         |
-| Rejestracja usług   | Eureka Server                    |
-| Bezpieczeństwo      | JWT, Spring Security              |
-| Monitoring          | Prometheus, Grafana, Elasticsearch, Kibana |
-| Konteneryzacja      | Docker, Docker Compose             |
-| Frontend (opcjonalny)| React                           |
+Nazwa: userDB
+Użytkownik: postgres
+Hasło: 666666
+Port: 5432
 
----
+3. Uruchomienie Mikrousług
+Eureka Server:
+bashcd eureka-server
+mvn spring-boot:run
+Dashboard: http://localhost:8761
+User Service:
+bashcd user-service
+mvn spring-boot:run
+Port: 8082
+Account Service:
+bashcd account-service
+mvn spring-boot:run
+Port: 8081
+Transaction Service:
+bashcd transaction-service
+mvn spring-boot:run
+Port: 8083 (w rozwoju)
+📡 Endpoints API
+User Service (Port 8082)
 
-## Struktura projektu
+POST /api/users/register - Rejestracja nowego użytkownika
+POST /api/users/login - Logowanie (zwraca JWT token)
+GET /api/users - Lista wszystkich użytkowników
+GET /api/users/{username} - Szczegóły użytkownika
+POST /api/users/updatedUser - Aktualizacja danych użytkownika
 
-java-bank-microservices/
-├── api-gateway/ # Gateway API - routing, autoryzacja
-├── eureka-service/ # Serwer Eureka - service discovery
-├── user-service/ # Mikroserwis użytkowników
-├── account-service/ # Mikroserwis kont bankowych
-├── transaction-service/ # Mikroserwis transakcji
-├── notification-service/ # Mikroserwis powiadomień
-├── frontend/ # Aplikacja React (opcjonalnie)
-├── docker-compose.yml # Plik kompozycji kontenerów
-└── README.md # Ten plik
+Account Service (Port 8081)
 
-yaml
-Kopiuj
-Edytuj
+GET /api/accounts - Lista wszystkich kont
+POST /api/accounts - Utworzenie nowego konta
+GET /api/accounts/{userId} - Konta użytkownika
+GET /api/accounts/number/{accountNumber} - Konto po numerze
 
----
+📖 Dokumentacja API
+Po uruchomieniu serwisów, dokumentacja dostępna pod adresami:
 
-## Instrukcja uruchomienia
+User Service: http://localhost:8082/swagger-ui.html
+Account Service: http://localhost:8081/swagger-ui.html
 
-### Wymagania wstępne
+🐳 Docker Support
+Projekt wykorzystuje Docker Compose do uruchamiania usług infrastrukturalnych:
 
-- JDK 11 lub wyższy  
-- Docker i Docker Compose (zalecane)  
-- Maven  
+MongoDB (port 27017)
+Redis (port 6379)
 
-### Uruchomienie lokalne
+🔐 Konfiguracja Bezpieczeństwa
+yamljwt:
+  secret: moja-super-tajna-wartosc
+Wszystkie hasła są szyfrowane przy użyciu BCrypt, a komunikacja między serwisami jest zabezpieczona przez Eureka discovery.
+🚧 Status Rozwoju
 
-1. Sklonuj repozytorium:  
-   ```bash
-   git clone https://github.com/joannawalach1/JavaBank-microservices.git
-   cd JavaBank-microservices
-Uruchom bazę danych (MongoDB, Cassandra) oraz RabbitMQ (np. przez Dockera):
-
-bash
-Kopiuj
-Edytuj
-docker-compose up -d mongodb cassandra rabbitmq
-Uruchom Eureka Server:
-
-bash
-Kopiuj
-Edytuj
-cd eureka-service
-./mvnw spring-boot:run
-Uruchom mikroserwisy w kolejności:
-
-user-service
-account-service
-transaction-service
-notification-service
-
-Każdy uruchamiaj poleceniem:
-
-bash
-Kopiuj
-Edytuj
-./mvnw spring-boot:run
-Uruchom API Gateway:
-
-bash
-Kopiuj
-Edytuj
-cd ../api-gateway
-./mvnw spring-boot:run
-(Opcjonalnie) Uruchom frontend React:
-
-bash
-Kopiuj
-Edytuj
-cd ../frontend
-npm install
-npm start
-Uruchomienie za pomocą Dockera (cały system)
-bash
-Kopiuj
-Edytuj
-docker-compose up --build
-Przykłady użycia
-Rejestracja użytkownika
-css
-Kopiuj
-Edytuj
-POST /user-service/api/users/register
-Body:
-{
-  "email": "user@example.com",
-  "password": "strongpassword",
-  "name": "Jan Kowalski"
-}
-Logowanie i pobranie tokena JWT
-css
-Kopiuj
-Edytuj
-POST /user-service/api/users/login
-Body:
-{
-  "email": "user@example.com",
-  "password": "strongpassword"
-}
-Response:
-{
-  "token": "jwt-token-string"
-}
-Pobranie listy kont użytkownika (z tokenem)
-vbnet
-Kopiuj
-Edytuj
-GET /account-service/api/accounts
-Headers:
-Authorization: Bearer <jwt-token-string>
-Monitorowanie i logowanie
-Prometheus zbiera metryki mikroserwisów
-
-Grafana wizualizuje dane metryk w czasie rzeczywistym
-
-Elasticsearch + Kibana przechowują i przeszukują logi aplikacji
-
-Wszystkie mikroserwisy mają endpointy health check oraz metrics zgodne z Spring Actuator
-
-Rozwój projektu
-Dodanie wsparcia dla płatności zewnętrznych (np. integracja z systemem bankowym)
-
-Rozbudowa frontendowej aplikacji React o panel administracyjny
-
-Dodanie testów integracyjnych i end-to-end
-
-Rozwój automatyzacji CI/CD z GitHub Actions
-
-Skalowanie systemu w chmurze (np. Kubernetes)
-
-Autor
-Joanna Walach
-GitHub: https://github.com/joannawalach1
-
-
+✅ User Service - Ukończony
+✅ Account Service - Ukończony
+✅ Eureka Server - Ukończony
+🚧 Transaction Service - W trakcie rozwoju
