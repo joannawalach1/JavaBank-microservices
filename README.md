@@ -95,20 +95,9 @@ mvn spring-boot:run
 Port: 8083 (w rozwoju)
 📡 Endpoints API
 User Service (Port 8082)
-
-POST /api/users/register - Rejestracja nowego użytkownika
-POST /api/users/login - Logowanie (zwraca JWT token)
-GET /api/users - Lista wszystkich użytkowników
-GET /api/users/{username} - Szczegóły użytkownika
-POST /api/users/updatedUser - Aktualizacja danych użytkownika
-
+MethodEndpointOpisPOST/api/users/registerRejestracja nowego użytkownikaPOST/api/users/loginLogowanie (zwraca JWT token)GET/api/usersLista wszystkich użytkownikówGET/api/users/{username}Szczegóły użytkownikaPOST/api/users/updatedUserAktualizacja danych użytkownika
 Account Service (Port 8081)
-
-GET /api/accounts - Lista wszystkich kont
-POST /api/accounts - Utworzenie nowego konta
-GET /api/accounts/{userId} - Konta użytkownika
-GET /api/accounts/number/{accountNumber} - Konto po numerze
-
+MethodEndpointOpisGET/api/accountsLista wszystkich kontPOST/api/accountsUtworzenie nowego kontaGET/api/accounts/{userId}Konta użytkownikaGET/api/accounts/number/{accountNumber}Konto po numerze
 📖 Dokumentacja API
 Po uruchomieniu serwisów, dokumentacja dostępna pod adresami:
 
@@ -121,13 +110,20 @@ Projekt wykorzystuje Docker Compose do uruchamiania usług infrastrukturalnych:
 MongoDB (port 27017)
 Redis (port 6379)
 
+bashcd account-service
+docker-compose up -d
 🔐 Konfiguracja Bezpieczeństwa
 yamljwt:
   secret: moja-super-tajna-wartosc
-Wszystkie hasła są szyfrowane przy użyciu BCrypt, a komunikacja między serwisami jest zabezpieczona przez Eureka discovery.
-🚧 Status Rozwoju
 
-✅ User Service - Ukończony
-✅ Account Service - Ukończony
-✅ Eureka Server - Ukończony
-🚧 Transaction Service - W trakcie rozwoju
+Uwaga: Wszystkie hasła są szyfrowane przy użyciu BCrypt, a komunikacja między serwisami jest zabezpieczona przez Eureka discovery.
+
+🚧 Status Rozwoju
+SerwisStatusUser Service✅ UkończonyAccount Service✅ UkończonyEureka Server✅ UkończonyTransaction Service🚧 W trakcie rozwoju
+🤝 Wkład w Projekt
+Projekt jest otwarty na współpracę. W przypadku znalezienia błędów lub pomysłów na ulepszenia, prosimy o utworzenie Issue lub Pull Request.
+📝 Licencja
+Projekt udostępniony na zasadach licencji MIT.
+
+Autor: joannawalach1
+Repozytorium: JavaBank-microservices
