@@ -1,203 +1,228 @@
-# 💳 JavaBank – Microservices Banking System
+# JavaBank-microservices
 
-A modular banking system built using **Spring Boot** and **Spring Cloud**, implementing a microservices architecture with service discovery, RESTful APIs, and distributed components.
-
-> This project is in active development and demonstrates how to structure a scalable microservices-based backend in Java.
+JavaBank-microservices to przykładowa aplikacja bankowa zbudowana w architekturze mikroserwisów, wykorzystująca nowoczesne technologie JVM i ekosystem Spring. Projekt demonstruje, jak stworzyć skalowalny, modularny i łatwy w utrzymaniu system bankowy rozłożony na kilka niezależnych mikroserwisów komunikujących się asynchronicznie i synchronicznie.
 
 ---
 
-## 📦 Project Structure
+## Spis treści
 
-This repository consists of the following microservices and components:
-
-| Module                      | Description                                                        |
-|-----------------------------|--------------------------------------------------------------------|
-| [`eureka-server`](./eureka-server)            | Eureka Service Discovery server                                 |
-| [`user-service`](./user-service)              | Handles user registration, login (JWT), and profile management |
-| [`account-service`](./account-service)        | Manages user bank accounts (CRUD operations, MongoDB, Redis)   |
-| [`transaction-service`](./transaction-service)| (WIP) Processes account transactions and communication          |
-
----
-
-## 🧰 Tech Stack
-
-### ✅ Backend
-
-- **Spring Boot 3.2.0**
-- **Spring Cloud 2023.0.0**
-- **Spring Security** + **JWT**
-- **Spring Data JPA** (PostgreSQL)
-- **Spring Data MongoDB** (Account storage)
-- **Redis** (Caching)
-- **Eureka Discovery** (Netflix)
-- **OpenFeign** (Inter-service communication)
-- **Resilience4j** (Circuit breakers, retry)
-- **MapStruct**, **Lombok**, **ModelMapper**
-
-### ☁️ Infrastructure
-
-- **PostgreSQL** (User data)
-- **MongoDB** (Account data)
-- **Redis** (Caching)
-- **Docker Compose** (for MongoDB & Redis)
+- [Opis projektu](#opis-projektu)  
+- [Architektura](#architektura)  
+- [Funkcjonalności](#funkcjonalności)  
+- [Technologie](#technologie)  
+- [Struktura projektu](#struktura-projektu)  
+- [Instrukcja uruchomienia](#instrukcja-uruchomienia)  
+- [Przykłady użycia](#przykłady-użycia)  
+- [Monitorowanie i logowanie](#monitorowanie-i-logowanie)  
+- [Rozwój projektu](#rozwój-projektu)  
+- [Autor](#autor)  
+- [Licencja](#licencja)  
 
 ---
 
-## 🧪 Prerequisites
+## Opis projektu
 
-Ensure you have the following installed locally:
+JavaBank-microservices to kompletny system bankowy podzielony na niezależne mikroserwisy, które realizują wybrane domeny biznesowe, takie jak zarządzanie użytkownikami, kontami bankowymi, transakcjami i powiadomieniami. Projekt demonstruje:
 
-- Java 17+
-- Maven 3.6+
-- Docker & Docker Compose
-- PostgreSQL running locally or in a container
+- Zastosowanie Spring Boot i Spring Cloud do budowy mikroserwisów  
+- Rejestrację i odnajdywanie usług przez Eureka Server  
+- Bezpieczną autoryzację i uwierzytelnianie za pomocą JWT  
+- Komunikację synchroniczną (REST) i asynchroniczną (RabbitMQ)  
+- Integrację z bazami danych (MongoDB, Cassandra) oraz Elasticsearch  
+- Monitoring za pomocą Prometheus i Grafana  
+- Skalowalność i elastyczność wdrożeń dzięki Dockerowi i Docker Compose  
 
 ---
 
-## 🚀 Quick Start
+## Architektura
 
-### 1. Start MongoDB and Redis (for Account Service)
-
-```bash
-cd account-service
-docker-compose up -d
-This will start:
-
-MongoDB: localhost:27017
-
-Redis: localhost:6379
-
-2. Create PostgreSQL Database for User Service
-Create the database manually or use Docker:
-
-Manual Setup:
-Database: userDB
-
-Username: postgres
-
-Password: 666666
-
-Port: 5432
-
-Docker Setup:
-bash
-Kopiuj
-Edytuj
-docker run --name postgres \
-  -e POSTGRES_DB=userDB \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=666666 \
-  -p 5432:5432 -d postgres
-3. Run the Microservices
-Recommended startup order:
-
-🧭 Start Eureka Server
-bash
-Kopiuj
-Edytuj
-cd eureka-server
-mvn spring-boot:run
-URL: http://localhost:8761
-
-👤 Start User Service
-bash
-Kopiuj
-Edytuj
-cd ../user-service
-mvn spring-boot:run
-Runs on: http://localhost:8082
-
-💼 Start Account Service
-bash
-Kopiuj
-Edytuj
-cd ../account-service
-mvn spring-boot:run
-Runs on: http://localhost:8081
-
-💸 (Optional) Start Transaction Service
-bash
-Kopiuj
-Edytuj
-cd ../transaction-service
-mvn spring-boot:run
-Runs on: http://localhost:8083
-
-📡 API Endpoints
-🔐 User Service (Port 8082)
-Authentication
-
-POST /api/users/register – Register a new user
-
-POST /api/users/login – Authenticate a user (returns JWT)
-
-User Management
-
-GET /api/users – Retrieve all users
-
-GET /api/users/{username} – Get user details by username
-
-POST /api/users/updatedUser – Update user profile
-
-GET /api/users/{username}/accounts – Retrieve user's associated accounts
-
-🏦 Account Service (Port 8081)
-GET /api/accounts – Get all accounts
-
-GET /api/accounts/{userId} – Get accounts by user ID
-
-GET /api/accounts/number/{accountNumber} – Get account by account number
-
-GET /api/accounts/user/{userId} – (Alt) Get accounts by user ID
-
-POST /api/accounts – Create a new account
-
-📖 Swagger Documentation
-Access live API documentation:
-
-User Service: http://localhost:8082/swagger-ui.html
-
-Account Service: http://localhost:8081/swagger-ui.html
-
-🔐 Security
-JWT-based authentication
-
-Secure password hashing (BCrypt)
-
-Role-based access control (user/admin)
-
-Service-to-service security via Eureka and Feign
-
-⚙️ Configuration
-🔑 JWT
-Located in user-service/src/main/resources/application.yml:
++----------------+ +---------------+ +------------------+
+| Frontend UI | ---> | API Gateway | <---> | Eureka Server |
++----------------+ +---------------+ +------------------+
+| | |
+-------------------------------------------------
+| | | |
++-----------+ +------------+ +--------------+ +---------------+
+| user-service | account-service | transaction-service | notification-service |
++-----------+ +------------+ +--------------+ +---------------+
+| | | |
+MongoDB / Cassandra MongoDB MongoDB RabbitMQ (MQ)
 
 yaml
 Kopiuj
 Edytuj
-jwt:
-  secret: moja-super-tajna-wartosc
-🔧 Other Key Config Files
-Path	Description
-eureka-server/src/main/resources/application.yml	Eureka config
-user-service/src/main/resources/application.yml	DB, JWT, port, discovery
-account-service/src/main/resources/application.yml	MongoDB, Redis config
-account-service/docker-compose.yml	MongoDB and Redis containers
 
-🐳 Docker Support
-To start supporting services via Docker:
+- **API Gateway**: Punkt wejścia do systemu, odpowiedzialny za routing, uwierzytelnianie i agregację usług  
+- **Eureka Server**: Rejestracja i odnajdywanie mikroserwisów  
+- **User Service**: Zarządzanie użytkownikami, profilem i rolami  
+- **Account Service**: Obsługa kont bankowych, sald i limitów  
+- **Transaction Service**: Przetwarzanie i historia transakcji  
+- **Notification Service**: Wysyłanie powiadomień o zdarzeniach (np. potwierdzenia transakcji)  
+- **RabbitMQ**: Komunikacja asynchroniczna (event-driven architecture)  
+
+---
+
+## Funkcjonalności
+
+- Rejestracja, logowanie i zarządzanie użytkownikami z JWT  
+- CRUD kont bankowych i kontrola statusu konta  
+- Wykonywanie i rejestrowanie transakcji między kontami  
+- Asynchroniczne powiadomienia i obsługa zdarzeń  
+- Pełna obsługa błędów i walidacji danych  
+- Monitoring metryk i logów w czasie rzeczywistym  
+
+---
+
+## Technologie
+
+| Kategoria           | Technologie                        |
+|---------------------|----------------------------------|
+| Język programowania  | Java 11+                         |
+| Framework           | Spring Boot, Spring Cloud         |
+| Bazy danych         | MongoDB, Cassandra                |
+| Messaging           | RabbitMQ                         |
+| Rejestracja usług   | Eureka Server                    |
+| Bezpieczeństwo      | JWT, Spring Security              |
+| Monitoring          | Prometheus, Grafana, Elasticsearch, Kibana |
+| Konteneryzacja      | Docker, Docker Compose             |
+| Frontend (opcjonalny)| React                           |
+
+---
+
+## Struktura projektu
+
+java-bank-microservices/
+├── api-gateway/ # Gateway API - routing, autoryzacja
+├── eureka-service/ # Serwer Eureka - service discovery
+├── user-service/ # Mikroserwis użytkowników
+├── account-service/ # Mikroserwis kont bankowych
+├── transaction-service/ # Mikroserwis transakcji
+├── notification-service/ # Mikroserwis powiadomień
+├── frontend/ # Aplikacja React (opcjonalnie)
+├── docker-compose.yml # Plik kompozycji kontenerów
+└── README.md # Ten plik
+
+yaml
+Kopiuj
+Edytuj
+
+---
+
+## Instrukcja uruchomienia
+
+### Wymagania wstępne
+
+- JDK 11 lub wyższy  
+- Docker i Docker Compose (zalecane)  
+- Maven  
+
+### Uruchomienie lokalne
+
+1. Sklonuj repozytorium:  
+   ```bash
+   git clone https://github.com/joannawalach1/JavaBank-microservices.git
+   cd JavaBank-microservices
+Uruchom bazę danych (MongoDB, Cassandra) oraz RabbitMQ (np. przez Dockera):
 
 bash
 Kopiuj
 Edytuj
-cd account-service
-docker-compose up -d
-You can also run PostgreSQL using the Docker command shown earlier.
+docker-compose up -d mongodb cassandra rabbitmq
+Uruchom Eureka Server:
 
-🚧 Development Status
-Service	Status
-User Service	✅ Complete
-Account Service	✅ Complete
-Eureka Server	✅ Complete
-Transaction Service	🚧 In Progress
+bash
+Kopiuj
+Edytuj
+cd eureka-service
+./mvnw spring-boot:run
+Uruchom mikroserwisy w kolejności:
+
+user-service
+account-service
+transaction-service
+notification-service
+
+Każdy uruchamiaj poleceniem:
+
+bash
+Kopiuj
+Edytuj
+./mvnw spring-boot:run
+Uruchom API Gateway:
+
+bash
+Kopiuj
+Edytuj
+cd ../api-gateway
+./mvnw spring-boot:run
+(Opcjonalnie) Uruchom frontend React:
+
+bash
+Kopiuj
+Edytuj
+cd ../frontend
+npm install
+npm start
+Uruchomienie za pomocą Dockera (cały system)
+bash
+Kopiuj
+Edytuj
+docker-compose up --build
+Przykłady użycia
+Rejestracja użytkownika
+css
+Kopiuj
+Edytuj
+POST /user-service/api/users/register
+Body:
+{
+  "email": "user@example.com",
+  "password": "strongpassword",
+  "name": "Jan Kowalski"
+}
+Logowanie i pobranie tokena JWT
+css
+Kopiuj
+Edytuj
+POST /user-service/api/users/login
+Body:
+{
+  "email": "user@example.com",
+  "password": "strongpassword"
+}
+Response:
+{
+  "token": "jwt-token-string"
+}
+Pobranie listy kont użytkownika (z tokenem)
+vbnet
+Kopiuj
+Edytuj
+GET /account-service/api/accounts
+Headers:
+Authorization: Bearer <jwt-token-string>
+Monitorowanie i logowanie
+Prometheus zbiera metryki mikroserwisów
+
+Grafana wizualizuje dane metryk w czasie rzeczywistym
+
+Elasticsearch + Kibana przechowują i przeszukują logi aplikacji
+
+Wszystkie mikroserwisy mają endpointy health check oraz metrics zgodne z Spring Actuator
+
+Rozwój projektu
+Dodanie wsparcia dla płatności zewnętrznych (np. integracja z systemem bankowym)
+
+Rozbudowa frontendowej aplikacji React o panel administracyjny
+
+Dodanie testów integracyjnych i end-to-end
+
+Rozwój automatyzacji CI/CD z GitHub Actions
+
+Skalowanie systemu w chmurze (np. Kubernetes)
+
+Autor
+Joanna Walach
+GitHub: https://github.com/joannawalach1
+
 
