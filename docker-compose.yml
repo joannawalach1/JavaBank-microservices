@@ -42,53 +42,58 @@ services:
 
   mongo:
     image: mongo:6.0
+    container_name: mongo
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    restart: unless-stopped
 
-    redis:
-      image: redis:7.0
-      ports:
-        - "6379:6379"
-    cassandra:
-      image: cassandra:4.1
-      container_name: cassandra
-      ports:
-        - "9042:9042"
-      environment:
-        - CASSANDRA_CLUSTER_NAME=banking-cluster
-        - CASSANDRA_DC=datacenter1
-        - CASSANDRA_RACK=rack1
-      volumes:
-        - cassandra_data:/var/lib/cassandra
-      healthcheck:
-        test: [ "CMD", "cqlsh", "-e", "describe keyspaces" ]
-        interval: 30s
-        timeout: 10s
-        retries: 10
+  redis:
+    image: redis:7.0
+    container_name: redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
 
-      cassandra-init:
-        image: cassandra:4.1
-        depends_on:
-          cassandra:
-            condition: service_healthy
-        volumes:
-          - ./init.cql:/init.cql
-        command: >
-          bash -c "
-            echo 'Waiting for Cassandra to be ready...'
-            until cqlsh cassandra -e 'describe keyspaces' > /dev/null 2>&1; do
-              echo 'Still waiting...'
-              sleep 5
-            done
-            echo 'Cassandra is ready. Running initialization...'
-            cqlsh cassandra -f ./init.cql
-            echo 'Initialization completed.'
-          "
-        restart: "no"
+  cassandra:
+    image: cassandra:4.1
+    container_name: cassandra
+    ports:
+      - "9042:9042"
+    environment:
+      - CASSANDRA_CLUSTER_NAME=banking-cluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_RACK=rack1
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+    restart: unless-stopped
 
-
+  cassandra-init:
+    image: cassandra:4.1
+    container_name: cassandra-init
+    depends_on:
+      cassandra:
+        condition: service_healthy
+    volumes:
+      - ./init.cql:/init.cql
+    command: >
+      bash -c "
+        echo 'Waiting for Cassandra to be ready...'
+        until cqlsh cassandra -e 'describe keyspaces' > /dev/null 2>&1; do
+          echo 'Still waiting...'
+          sleep 5
+        done
+        echo 'Cassandra is ready. Running initialization...'
+        cqlsh cassandra -f /init.cql
+        echo 'Initialization completed.'
+      "
+    restart: "no"
 
 volumes:
   prometheus_data:

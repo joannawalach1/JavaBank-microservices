@@ -4,6 +4,8 @@ import com.banking.userservice.dto.AccountResponseDto;
 import com.banking.userservice.dto.*;
 import com.banking.userservice.exceptions.InvalidLoginData;
 import com.banking.userservice.exceptions.NoDataException;
+import com.banking.userservice.exceptions.UserNotFound;
+import com.banking.userservice.exceptions.UserWithThatEmailExists;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/username//{username}")
-    public ResponseEntity<UserResponseDto> findUserByUsername(@PathVariable String username) {
+    public ResponseEntity<UserResponseDto> findUserByUsername(@PathVariable String username) throws UserNotFound {
         UserResponseDto userByUsername = userService.findUserByUsername(username);
         return ResponseEntity.status(HttpStatus.OK).body(userByUsername);
     }
@@ -47,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) throws NoDataException {
+    public ResponseEntity<UserResponseDto> createUser(@Valid @RequestBody UserCreateDto userCreateDto) throws NoDataException, UserWithThatEmailExists {
         UserResponseDto user = userService.createUser(userCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
@@ -65,7 +67,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}/accounts")
-    public ResponseEntity<UserWithAccountsDto> getUserWithAccounts(@PathVariable String username) {
+    public ResponseEntity<UserWithAccountsDto> getUserWithAccounts(@PathVariable String username) throws UserNotFound {
         UserResponseDto user = userService.findUserByUsername(username);
         if (user == null) {
             return ResponseEntity.notFound().build();
