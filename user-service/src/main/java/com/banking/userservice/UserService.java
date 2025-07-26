@@ -7,7 +7,6 @@ import com.banking.userservice.dto.UserResponseDto;
 import com.banking.userservice.exceptions.InvalidLoginData;
 import com.banking.userservice.exceptions.NoDataException;
 import com.banking.userservice.exceptions.UserNotFound;
-import com.banking.userservice.exceptions.UserWithThatEmailExists;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

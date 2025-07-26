@@ -3,6 +3,7 @@ package com.banking.userservice;
 import com.banking.userservice.dto.UserCreateDto;
 import com.banking.userservice.dto.UserResponseDto;
 import com.banking.userservice.exceptions.NoDataException;
+import com.banking.userservice.exceptions.UserWithThatEmailExists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,12 +13,12 @@ import static org.mockito.Mockito.*;
 
 public class UserServiceApplicationTest {
 
-    private InMemoryUserRepository inMemoryUserRepository;
+    private InMemoryUserRepository inMemoryUserRepository = new InMemoryUserRepository();
     private UserService userService;
     private UserResponseDto userResponseDto;
     private JwtService jwtService;
     private PasswordEncoder passwordEncoder;
-    private UserServiceValidator userValidator;
+    private UserServiceValidator userValidator = new UserServiceValidator(inMemoryUserRepository);
 
     @BeforeEach
     void setUp() throws NoDataException {
