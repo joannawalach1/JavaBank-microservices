@@ -15,13 +15,9 @@ public class UserServiceValidator {
         this.userRepository = userRepository;
     }
 
-    public void validate(UserCreateDto userCreateDto) throws NoDataException {
+    public void validate(UserCreateDto userCreateDto) throws NoDataException, UserWithThatEmailExists {
         if (userCreateDto.getUsername() == null || userCreateDto.getEmail() == null) {
             throw new NoDataException("Username and email cannot be null");
-        }
-
-        if (userRepository.existsByUsername(userCreateDto.getUsername())) {
-            throw new UserWithThatEmailExists("Username already exists: " + userCreateDto.getUsername());
         }
 
         if (userRepository.existsByEmail(userCreateDto.getEmail())) {

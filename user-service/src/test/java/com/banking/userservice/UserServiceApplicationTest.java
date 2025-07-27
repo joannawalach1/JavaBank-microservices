@@ -3,6 +3,8 @@ package com.banking.userservice;
 import com.banking.userservice.dto.UserCreateDto;
 import com.banking.userservice.dto.UserResponseDto;
 import com.banking.userservice.exceptions.NoDataException;
+import com.banking.userservice.exceptions.UserNotFound;
+import com.banking.userservice.exceptions.UserWithThatEmailExists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,15 +14,15 @@ import static org.mockito.Mockito.*;
 
 public class UserServiceApplicationTest {
 
-    private InMemoryUserRepository inMemoryUserRepository;
+    private InMemoryUserRepository inMemoryUserRepository = new InMemoryUserRepository();
     private UserService userService;
     private UserResponseDto userResponseDto;
     private JwtService jwtService;
     private PasswordEncoder passwordEncoder;
-    private UserServiceValidator userValidator;
+    private UserServiceValidator userValidator = new UserServiceValidator(inMemoryUserRepository);
 
     @BeforeEach
-    void setUp() throws NoDataException {
+    void setUp() throws NoDataException, UserWithThatEmailExists {
         jwtService = mock(JwtService.class);
         passwordEncoder = mock(PasswordEncoder.class);
 
@@ -40,9 +42,12 @@ public class UserServiceApplicationTest {
     }
 
     @Test
-    public void shouldNotCreateUserWithExistingEmail() {
+    public void shouldNotCreateUserWithExistingEmail() throws UserWithThatEmailExists, NoDataException {
+        UserCreateDto originalDto = new UserCreateDto("JoeD1", "joe@op.pl", "Joe", "Doe", "password", "234567890");
+        userService.createUser(originalDto);
         UserCreateDto duplicateEmailDto = new UserCreateDto("JoeD1", "joe@op.pl", "Joe", "Does","password", "234567890");
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+
+        UserWithThatEmailExists exception = assertThrows(UserWithThatEmailExists.class, () -> {
             userService.createUser(duplicateEmailDto);
         });
 
@@ -50,7 +55,7 @@ public class UserServiceApplicationTest {
     }
 
     @Test
-    public void shouldReturnUserByUsername() {
+    public void shouldReturnUserByUsername() throws UserNotFound {
         UserResponseDto userByUsername = userService.findUserByUsername("JoeD");
 
         assertNotNull(userByUsername);
@@ -63,7 +68,7 @@ public class UserServiceApplicationTest {
 
     @Test
     public void shouldThrowExceptionWhenUserNotFound() {
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+        UserNotFound exception = assertThrows(UserNotFound.class, () -> {
             userService.findUserByUsername("not_existing");
         });
 

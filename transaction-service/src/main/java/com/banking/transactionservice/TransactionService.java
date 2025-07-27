@@ -3,6 +3,7 @@ package com.banking.transactionservice;
 import com.banking.transactionservice.dto.AccountUpdateRequestDto;
 import com.banking.transactionservice.dto.TransactionCreateRequest;
 import com.banking.transactionservice.dto.TransactionResponseDto;
+import com.banking.transactionservice.exceptions.TransactionNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -68,19 +69,19 @@ public class TransactionService {
         return savedTransaction;
     }
 
-    public List<TransactionResponseDto> getTransactionsByType(String userId) {
-        return transactionRepository.findByUserIdAndTransactionType(userId).stream()
-                .map(TransactionMapper::toTransactionResponseDto)
-                .collect(Collectors.toList());
-    }
-    public List<TransactionResponseDto> getTransactionsByDateRange(String userId, LocalDateTime from, LocalDateTime to) {
-        return transactionRepository.findByUserIdAndCreatedAtBetween(userId, from, to).stream()
-                .map(TransactionMapper::toTransactionResponseDto)
-                .collect(Collectors.toList());
+    public List<Transaction> getTransactionsByType(String userId) {
+        return transactionRepository.findByUserIdAndTransactionType(userId)
+                .orElseThrow(() -> new TransactionNotFoundException("Transaction not found: " + userId));
     }
 
-    public List<TransactionResponseDto> getTransactionsByUserId(Long id) {
-        return null;
+    public List<Transaction> getTransactionsByDateRange(String userId, LocalDateTime from, LocalDateTime to) {
+        return transactionRepository.findByUserIdAndCreatedAtBetween(userId, from, to)
+                .orElseThrow(() -> new TransactionNotFoundException("User not found: " + userId));
+    }
+
+    public List<Transaction> getTransactionsByUserId(String id) {
+        return transactionRepository.findByUserId(id)
+                .orElseThrow(() -> new TransactionNotFoundException("User not found: " + id));
     }
 
     public List<TransactionResponseDto> getAllTransactions() {

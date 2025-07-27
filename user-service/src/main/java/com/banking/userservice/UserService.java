@@ -31,13 +31,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public UserResponseDto findUserByUsername(String username) {
+    public UserResponseDto findUserByUsername(String username) throws UserNotFound {
         return userRepository.findByUsername(username)
                 .map(UserMapper::mapToResponseDto)
                 .orElseThrow(() -> new UserNotFound("User not found: " + username));
     }
 
-    public UserResponseDto createUser(UserCreateDto userCreateDto) throws NoDataException {
+    public UserResponseDto createUser(UserCreateDto userCreateDto) throws NoDataException, UserWithThatEmailExists {
         userServiceValidator.validate(userCreateDto);
         User user = new User();
         user.setUsername(userCreateDto.getUsername());

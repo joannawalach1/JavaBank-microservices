@@ -21,7 +21,7 @@ public class AccountServiceIntegrationTest extends BaseIntegrationTest {
     @Test
     public void should_create_new_account() {
         // 1. Tworzenie nowego konta
-        AccountCreateDto accountCreateDto = new AccountCreateDto(null, "1234567890123456", "user123", AccountType.SAVINGS, new BigDecimal("1000.00"), "USD", AccountStatus.ACTIVE);
+        AccountCreateDto accountCreateDto = new AccountCreateDto(null, "1234567890123456", "123L", AccountType.SAVINGS, new BigDecimal("1000.00"), "USD", AccountStatus.ACTIVE);
         ResponseEntity<AccountResponseDto> registerResponse = restTemplate.postForEntity(
                 "/api/accounts",
                 accountCreateDto,
@@ -32,7 +32,7 @@ public class AccountServiceIntegrationTest extends BaseIntegrationTest {
         assertNotNull(registerResponse.getBody());
         AccountResponseDto registeredAccount = registerResponse.getBody();
         assertEquals("1234567890123456", registerResponse.getBody().getAccountNumber());
-        assertEquals("user123", registerResponse.getBody().getUserId());
+        assertEquals("123L", registerResponse.getBody().getUserId());
 
         // 2. Pobranie listy kont użytkownika
 

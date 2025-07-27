@@ -1,12 +1,15 @@
 package com.banking.transactionservice.configuration;
 
 import com.datastax.oss.driver.api.core.CqlSession;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.cassandra.config.AbstractCassandraConfiguration;
 import org.springframework.data.cassandra.core.CassandraAdminTemplate;
+import org.springframework.data.cassandra.core.CassandraTemplate;
+import org.springframework.data.cassandra.repository.config.EnableCassandraRepositories;
 
 import java.net.InetSocketAddress;
 
@@ -41,9 +44,10 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     }
 
     @Bean
-    public CassandraAdminTemplate cassandraTemplate(CqlSession session) {
-        return new CassandraAdminTemplate(session);
+    public CassandraTemplate cassandraTemplate(CqlSession session) {
+        return new CassandraTemplate(session);
     }
+
 
 
     public void init() {

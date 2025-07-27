@@ -46,11 +46,22 @@ eureka:
 jwt:
   secret: moja-super-tajna-wartosc
 
+resilience4j:
+  circuitbreaker:
+    instances:
+      account-service:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus,metrics
+        include: resilience4j.circuitbreakers,health,info,prometheus,metrics
       base-path: /actuator
   endpoint:
     health:
@@ -58,6 +69,8 @@ management:
     prometheus:
       enabled: true
   metrics:
+    enable:
+      resilience4j.circuitbreaker: true
     export:
       prometheus:
         enabled: true
