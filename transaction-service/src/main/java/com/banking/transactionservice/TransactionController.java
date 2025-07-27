@@ -27,7 +27,7 @@ public class TransactionController {
     }
 
     @GetMapping("/type/{transactionType}")
-    public List<TransactionResponseDto> getTransactionByTransactionType(
+    public List<Transaction> getTransactionByTransactionType(
             @RequestParam String id) {
         return transactionService.getTransactionsByType(id);
     }

@@ -81,18 +81,8 @@ services:
       cassandra:
         condition: service_healthy
     volumes:
-      - ./init.cql:/init.cql
-    command: >
-      bash -c "
-        echo 'Waiting for Cassandra to be ready...'
-        until cqlsh cassandra -e 'describe keyspaces' > /dev/null 2>&1; do
-          echo 'Still waiting...'
-          sleep 5
-        done
-        echo 'Cassandra is ready. Running initialization...'
-        cqlsh cassandra -f /init.cql
-        echo 'Initialization completed.'
-      "
+      - /init.cql:/init.cql
+
     restart: "no"
 
 volumes:
