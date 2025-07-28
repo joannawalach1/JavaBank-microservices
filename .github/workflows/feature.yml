@@ -24,3 +24,18 @@ jobs:
               mvn -f "$d/pom.xml" clean install
             fi
           done
+  deploy-feature:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Deploy application
+        run: |
+          ssh user@your.server.com "cd /path/to/app && git pull origin feature/branch && ./restart.sh"
