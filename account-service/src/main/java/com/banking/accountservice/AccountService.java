@@ -56,7 +56,7 @@ public class AccountService {
                 .collect(Collectors.toList());
     }
 
-    public List<AccountResponseDto> getAccountsByUserId(String userId) {
+    public Account getAccountsByUserId(String userId) {
         return accountRepository.getAccountsByUserId(userId)
                 .orElseThrow(() -> new AccountNotFound("Account not found: "));
     }

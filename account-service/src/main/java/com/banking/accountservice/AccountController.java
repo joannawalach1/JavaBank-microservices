@@ -3,8 +3,6 @@ package com.banking.accountservice;
 import com.banking.accountservice.dto.AccountCreateDto;
 import com.banking.accountservice.dto.AccountResponseDto;
 import com.banking.accountservice.dto.AccountUpdateRequestDto;
-import com.banking.userservice.JwtService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
@@ -20,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountController {
     private final AccountService accountService;
-    private final JwtService jwtService;
+    private final UserClient userClient;
 
     @Cacheable(value = "getUserAccountById", key = "#userId")
     @GetMapping("/{userId}")
@@ -67,16 +65,11 @@ public class AccountController {
         return ResponseEntity.ok().build();
     }
     @GetMapping
-    public ResponseEntity<List<AccountResponseDto>> getMyAccounts(HttpServletRequest request) {
+    public ResponseEntity<Account> getMyAccounts(@RequestHeader("Authorization") String token) {
         try {
-            String token = jwtService.extractToken(request);
-            if (token == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-            }
-
-            String userId = jwtService.extractUsername(token);
-            List<AccountResponseDto> accounts = accountService.getAccountsByUserId(userId);
-            return ResponseEntity.ok(accounts);
+            String userId = userClient.getUserId(token);
+            Account account = accountService.getAccountsByUserId(userId);
+            return ResponseEntity.ok(account);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

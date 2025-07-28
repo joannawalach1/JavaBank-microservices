@@ -20,6 +20,8 @@ public class UserServiceApplicationTest {
     private JwtService jwtService;
     private PasswordEncoder passwordEncoder;
     private UserServiceValidator userValidator = new UserServiceValidator(inMemoryUserRepository);
+    private TransactionClient transactionClient;
+    private AccountClient accountClient;
 
     @BeforeEach
     void setUp() throws NoDataException, UserWithThatEmailExists {
@@ -29,9 +31,10 @@ public class UserServiceApplicationTest {
         when(passwordEncoder.encode(anyString())).thenAnswer(invocation -> "encoded-" + invocation.getArgument(0));
 
         inMemoryUserRepository = new InMemoryUserRepository();
-        userService = new UserService(inMemoryUserRepository, jwtService, passwordEncoder, userValidator);
+        userService = new UserService(inMemoryUserRepository, jwtService, passwordEncoder, userValidator, transactionClient, accountClient);
 
         userResponseDto = userService.createUser(new UserCreateDto("JoeD", "joe@op.pl", "Joe", "Does", "password", "234567890"));
+
     }
 
     @Test
@@ -43,6 +46,7 @@ public class UserServiceApplicationTest {
 
     @Test
     public void shouldNotCreateUserWithExistingEmail() throws UserWithThatEmailExists, NoDataException {
+        inMemoryUserRepository.deleteAll();
         UserCreateDto originalDto = new UserCreateDto("JoeD1", "joe@op.pl", "Joe", "Doe", "password", "234567890");
         userService.createUser(originalDto);
         UserCreateDto duplicateEmailDto = new UserCreateDto("JoeD1", "joe@op.pl", "Joe", "Does","password", "234567890");

@@ -105,4 +105,11 @@ public class UserController {
         UserFullProfileDto fullProfile = userService.getUserFullProfile(username);
         return ResponseEntity.ok(fullProfile);
     }
+
+    @GetMapping("/api/users/me")
+    public ResponseEntity<String> getMyUserId(@RequestHeader("Authorization") String token) {
+        String userId = jwtService.extractUsername(token);
+        return ResponseEntity.ok(userId);
+    }
+
 }
