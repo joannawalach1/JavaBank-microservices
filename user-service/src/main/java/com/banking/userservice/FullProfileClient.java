@@ -1,12 +1,11 @@
 package com.banking.userservice;
 
-import com.banking.transactionservice.Transaction;
 import com.banking.userservice.dto.AccountResponseDto;
+import com.banking.userservice.dto.TransactionResponseDto;
 import com.banking.userservice.dto.UserFullProfileDto;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -29,13 +28,13 @@ public class FullProfileClient {
 
         List<AccountResponseDto> accounts = accountClient.getAccountsForUser(user.getId());
 
-        List<Transaction> allTransactions = new ArrayList<>();
+        List<TransactionResponseDto> allTransactions = new ArrayList<>();
 
         if (accounts != null) {
             for (AccountResponseDto account : accounts) {
-                Transaction[] accountTransactions = transactionClient.getUserFullProfile(account.getUserId());
+                List<TransactionResponseDto> accountTransactions = transactionClient.getUserFullProfile(account.getUserId());
                 if (accountTransactions != null) {
-                    allTransactions.addAll(Arrays.asList(accountTransactions));
+                    allTransactions.addAll(accountTransactions);
                 }
             }
         }

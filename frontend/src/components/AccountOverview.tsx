@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -15,7 +14,6 @@ import {
   Eye,
   EyeOff,
   MoreHorizontal,
-  Settings,
   Copy,
   QrCode,
 } from "lucide-react";
@@ -75,10 +73,11 @@ export function AccountOverview() {
     }
   };
 
+  // ✅ Pobierz konta zalogowanego użytkownika
   const fetchAccounts = async () => {
     try {
       const token = localStorage.getItem("jwtToken");
-      const res = await fetch("http://localhost:8080/api/accounts/user", {
+      const res = await fetch("http://localhost:8081/api/accounts/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -86,7 +85,7 @@ export function AccountOverview() {
       if (!res.ok) throw new Error("Nie udało się pobrać kont");
       const data = await res.json();
       setAccounts(data);
-      console.log("Dane kont:", data);
+      console.log("📥 Konta użytkownika:", data);
     } catch (error) {
       console.error("❌ Błąd ładowania kont:", error);
     }
@@ -105,7 +104,7 @@ export function AccountOverview() {
         <div>
           <h2 className="text-xl font-bold">Przegląd kont</h2>
           <p className="text-sm text-muted-foreground">
-            Wszystkie Twoje konta bankowe w jednym miejscu
+            Twoje konta bankowe
           </p>
         </div>
         <Button
@@ -121,7 +120,7 @@ export function AccountOverview() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {accounts.map((account) => (
           <Card key={account.id} className="group shadow-md hover:shadow-lg transition-shadow">
-            <CardHeader className="flex justify-between items-start space-y-0 pb-2">
+            <CardHeader className="flex justify-between items-start pb-2">
               <div className="flex items-center space-x-3">
                 <div className="p-2 rounded-md bg-blue-100">
                   <CreditCard className="text-blue-600 h-5 w-5" />
@@ -198,6 +197,12 @@ export function AccountOverview() {
           </Card>
         ))}
       </div>
+
+      {accounts.length === 0 && (
+        <p className="text-center text-sm text-muted-foreground">
+          Brak kont do wyświetlenia.
+        </p>
+      )}
     </div>
   );
 }

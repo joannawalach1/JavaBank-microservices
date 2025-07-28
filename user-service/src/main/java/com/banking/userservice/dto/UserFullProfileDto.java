@@ -1,6 +1,5 @@
 package com.banking.userservice.dto;
 
-import com.banking.transactionservice.Transaction;
 import com.banking.userservice.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,11 +15,11 @@ public class UserFullProfileDto {
     private Long id;
     private String name;
     private String email;
-    private List<?> accounts;
-    private List<Transaction> transactions;
+    private List<AccountResponseDto> accounts;
+    private List<TransactionResponseDto> transactions;
 
 
-    public UserFullProfileDto(User user, List<AccountResponseDto> accountsResponse, List<Transaction> allTransactions) {
+    public UserFullProfileDto(User user, List<AccountResponseDto> accountsResponse, List<TransactionResponseDto> allTransactions) {
         this.id = user.getId();
         this.name = user.getFirstName() + " " + user.getSurname();
         this.email = user.getEmail();

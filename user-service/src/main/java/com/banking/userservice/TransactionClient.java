@@ -1,11 +1,14 @@
 package com.banking.userservice;
 
-import com.banking.transactionservice.Transaction;
+import com.banking.userservice.dto.TransactionResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "transaction-service")
+import java.util.List;
+
+@FeignClient(name = "transaction-service", url = "http://localhost:8082")
 public interface TransactionClient {
-    @GetMapping
-    public Transaction[] getUserFullProfile(String username);
+
+    @GetMapping("/transactions/user/{userId}")
+    public List<TransactionResponseDto> getUserFullProfile(String username);
 }

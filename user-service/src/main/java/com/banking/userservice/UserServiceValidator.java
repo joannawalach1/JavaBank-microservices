@@ -20,8 +20,6 @@ public class UserServiceValidator {
             throw new NoDataException("Username and email cannot be null");
         }
 
-        if (userRepository.existsByEmail(userCreateDto.getEmail())) {
-            throw new UserWithThatEmailExists("Email already exists: " + userCreateDto.getEmail());
-        }
+
     }
 }

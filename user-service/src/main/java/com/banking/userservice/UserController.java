@@ -6,6 +6,7 @@ import com.banking.userservice.exceptions.InvalidLoginData;
 import com.banking.userservice.exceptions.NoDataException;
 import com.banking.userservice.exceptions.UserNotFound;
 import com.banking.userservice.exceptions.UserWithThatEmailExists;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,23 @@ public class UserController {
     public ResponseEntity<UserResponseDto> findUserByUsername(@PathVariable String username) throws UserNotFound {
         UserResponseDto userByUsername = userService.findUserByUsername(username);
         return ResponseEntity.status(HttpStatus.OK).body(userByUsername);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserFullProfileDto> getCurrentUser(HttpServletRequest request) {
+        try {
+            String token = jwtService.extractToken(request);
+            if (token == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
+
+            String userId = jwtService.extractUsername(token);
+            UserFullProfileDto user = userService.getUserFullProfile(userId);
+
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
     @GetMapping("/id/{id}")
@@ -87,4 +105,11 @@ public class UserController {
         UserFullProfileDto fullProfile = userService.getUserFullProfile(username);
         return ResponseEntity.ok(fullProfile);
     }
+
+    @GetMapping("/api/users/me")
+    public ResponseEntity<String> getMyUserId(@RequestHeader("Authorization") String token) {
+        String userId = jwtService.extractUsername(token);
+        return ResponseEntity.ok(userId);
+    }
+
 }

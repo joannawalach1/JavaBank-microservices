@@ -1,9 +1,6 @@
 package com.banking.userservice;
 
-import com.banking.userservice.dto.UserCreateDto;
-import com.banking.userservice.dto.UserFullProfileDto;
-import com.banking.userservice.dto.UserLoginRequest;
-import com.banking.userservice.dto.UserResponseDto;
+import com.banking.userservice.dto.*;
 import com.banking.userservice.exceptions.InvalidLoginData;
 import com.banking.userservice.exceptions.NoDataException;
 import com.banking.userservice.exceptions.UserNotFound;
@@ -24,6 +21,8 @@ public class UserService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final UserServiceValidator userServiceValidator;
+    private final TransactionClient transactionClient;
+    private final AccountClient accountClient;
 
     public List<UserResponseDto> findAllUsers() {
         return userRepository.findAll().stream()
@@ -38,6 +37,9 @@ public class UserService {
     }
 
     public UserResponseDto createUser(UserCreateDto userCreateDto) throws NoDataException, UserWithThatEmailExists {
+        if (userRepository.existsByEmail(userCreateDto.getEmail())) {
+            throw new UserWithThatEmailExists("Email already exists: " + userCreateDto.getEmail());
+        }
         userServiceValidator.validate(userCreateDto);
         User user = new User();
         user.setUsername(userCreateDto.getUsername());
@@ -98,11 +100,15 @@ public class UserService {
     public UserFullProfileDto getUserFullProfile(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User with username '" + username + "' was not found"));
+        List<AccountResponseDto> accountsForUser = accountClient.getAccountsForUser(user.getId());
+        List<TransactionResponseDto> transactions = transactionClient.getUserFullProfile(user.getUsername());
 
         UserFullProfileDto dto = new UserFullProfileDto();
         dto.setId(user.getId());
         dto.setName(user.getUsername());
         dto.setEmail(user.getEmail());
+        dto.setAccounts(accountsForUser);
+        dto.setTransactions(transactions);
         return dto;
     }
 }

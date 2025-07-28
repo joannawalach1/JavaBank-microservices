@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { LoginForm } from "@/components/LoginForm";
-import { Dashboard } from "@/components/Dashboard";
+import  Dashboard  from "@/components/Dashboard";
 import { TransferForm } from "@/components/TransferForm";
 import { TransactionHistory } from "@/components/TransactionHistory";
 import { AccountOverview } from "@/components/AccountOverview";
@@ -63,7 +63,7 @@ const Index = () => {
       usedThisMonth: 2340.75
     },
     {
-      id: "2", 
+      id: "2",
       type: "Savings Account",
       balance: 45890.25,
       accountNumber: "1234567890123457",
@@ -73,7 +73,7 @@ const Index = () => {
     },
     {
       id: "3",
-      type: "Business Account", 
+      type: "Business Account",
       balance: 8750.00,
       accountNumber: "1234567890123458",
       currency: "PLN",
@@ -84,7 +84,7 @@ const Index = () => {
       type: "Credit Card",
       balance: -2150.00,
       accountNumber: "1234567890123459",
-      currency: "PLN", 
+      currency: "PLN",
       status: "active",
       creditLimit: 10000
     }
@@ -103,7 +103,7 @@ const Index = () => {
     },
     {
       id: "2",
-      type: "debit", 
+      type: "debit",
       amount: 450.75,
       description: "Online Shopping",
       date: "2024-01-14",
@@ -138,7 +138,7 @@ const Index = () => {
       description: "Subscription Payment",
       date: "2024-01-11",
       category: "Entertainment",
-      accountName: "Checking Account", 
+      accountName: "Checking Account",
       status: "completed"
     },
     {
@@ -337,7 +337,7 @@ const handleLogout = () => {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen relative"
       style={{
         backgroundColor: '#1d4ed8',
@@ -346,7 +346,7 @@ const handleLogout = () => {
       }}
     >
       <Header user={user} onLogout={handleLogout} />
-      
+
       <main className="container mx-auto px-4 py-8 relative z-10">
         {/* Cards with better contrast for blue background */}
         {currentView === "dashboard" && (
@@ -361,7 +361,7 @@ const handleLogout = () => {
             onViewProfile={() => setCurrentView("profile")}
           />
         )}
-        
+
         {currentView === "transfer" && (
           <TransferForm
             accounts={accounts}
@@ -369,7 +369,7 @@ const handleLogout = () => {
             onBack={() => setCurrentView("dashboard")}
           />
         )}
-        
+
         {currentView === "transactions" && (
           <TransactionHistory
             transactions={transactions}
@@ -400,7 +400,7 @@ const handleLogout = () => {
                 Back to Dashboard
               </Button>
             </div>
-            
+
             <BankingStats
               monthlyIncome={6500}
               monthlyExpenses={4200}
