@@ -45,7 +45,6 @@ export function UserProfile({ user, onUpdateProfile, onBack }: UserProfileProps)
     name: user.name,
     email: user.email,
     phone: user.phone || "",
-    address: user.address || "",
     dateOfBirth: user.dateOfBirth || "",
   });
   const [notifications, setNotifications] = useState({
