@@ -2,6 +2,7 @@ package com.banking.transactionservice;
 
 import com.banking.transactionservice.dto.TransactionCreateRequest;
 import com.banking.transactionservice.dto.TransactionResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,7 +18,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
     @PostMapping
-    public Transaction createTransaction(@RequestBody TransactionCreateRequest transactionCreateRequest) {
+    public Transaction createTransaction(@RequestBody @Valid TransactionCreateRequest transactionCreateRequest) {
         return transactionService.createTransaction(transactionCreateRequest);
     }
 

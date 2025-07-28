@@ -6,14 +6,12 @@ import com.banking.accountservice.dto.AccountUpdateRequestDto;
 import com.banking.accountservice.exceptions.AccountNotFound;
 import com.banking.accountservice.exceptions.DuplicateAccountNumberException;
 import com.banking.accountservice.exceptions.InvalidCurrencyException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,7 +56,7 @@ public class AccountService {
                 .collect(Collectors.toList());
     }
 
-    public Account getAccountsByUserId(String userId) {
+    public List<AccountResponseDto> getAccountsByUserId(String userId) {
         return accountRepository.getAccountsByUserId(userId)
                 .orElseThrow(() -> new AccountNotFound("Account not found: "));
     }
